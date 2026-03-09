@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Terminal.Gui.Reflect.TestApp/Terminal.Gui.Reflect.TestApp.csproj" Id="008a9234-d82b-4f51-8b4a-1d48026aa31d" />
+  <Project Path="Terminal.Gui.Reflect/Terminal.Gui.Reflect.csproj" />
+</Solution>
