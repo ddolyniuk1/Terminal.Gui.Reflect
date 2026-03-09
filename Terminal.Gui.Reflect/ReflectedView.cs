@@ -8,6 +8,7 @@ namespace Terminal.Gui.Reflect;
 public class ReflectedView : FrameView
 {
     private readonly object _boundModel;
+    protected virtual string DefaultCategory => "General";
 
     private readonly Dictionary<string, View> _categoryViewDictionary = new();
 
@@ -29,12 +30,15 @@ public class ReflectedView : FrameView
 
         var categoryLayoutDefinitions = GetCategoryLayoutDefinitionLookup();
         var categoryPropertiesOrdered = GetCategories()
-           .OrderBy(c => (categoryLayoutDefinitions.GetValueOrDefault(c) ?? new CategoryLayoutAttribute(c)).Order);
+           .OrderBy(c => (categoryLayoutDefinitions.GetValueOrDefault(c) ?? new CategoryLayoutAttribute(c)).Order)
+           .ToList();
 
         var uniformGrid = new UniformGrid(getLayoutAttribute.MaxRows, getLayoutAttribute.MaxColumns);
         uniformGrid.Width  = Dim.Fill();
         uniformGrid.Height = Dim.Fill();
-
+        
+        var hasCategories = categoryPropertiesOrdered.Any(t => t != DefaultCategory);
+        
         foreach (var category in categoryPropertiesOrdered)
         {
             if (!categoryLayoutDefinitions.TryGetValue(category, out var metadata))
@@ -42,7 +46,7 @@ public class ReflectedView : FrameView
                 metadata = new CategoryLayoutAttribute(category);
             }
 
-            _categoryViewDictionary[category] = BuildAndAddCategoryView(uniformGrid, category, metadata);
+            _categoryViewDictionary[category] = BuildAndAddCategoryView(uniformGrid, hasCategories, category, metadata);
         }
 
         Add(uniformGrid);
@@ -51,16 +55,28 @@ public class ReflectedView : FrameView
     protected virtual View GetCategoryView(string category)
     {
         return _categoryViewDictionary.GetValueOrDefault(category) ??
-               _categoryViewDictionary.GetValueOrDefault("General")!;
+               _categoryViewDictionary.GetValueOrDefault(DefaultCategory)!;
     }
 
-    protected virtual View BuildAndAddCategoryView(View parent, string category, params object[] metadata)
+    protected virtual View BuildAndAddCategoryView(View parent, bool hasCategories, string category, params object[] metadata)
     {
-        var frameView = new FrameView();
-        frameView.Width  = Dim.Fill();
-        frameView.Height = Dim.Fill();
-        frameView.Title  = category;
+        View categoryView;
+       
 
+        if (hasCategories)
+        {
+            categoryView = new FrameView();
+            categoryView.Title  = category;
+        }
+        else
+        {
+            categoryView = new View();
+        }
+        
+        categoryView.CanFocus = true;
+        categoryView.Width  = Dim.Fill();
+        categoryView.Height = Dim.Fill();
+        
         UniformGrid uniformGrid;
 
         var layoutDefinition = metadata.OfType<CategoryLayoutAttribute>().FirstOrDefault();
@@ -71,26 +87,31 @@ public class ReflectedView : FrameView
             uniformGrid.Width  = Dim.Fill();
             uniformGrid.Height = Dim.Fill();
 
-            frameView.Add(uniformGrid);
+            categoryView.Add(uniformGrid);
         }
         else
         {
             uniformGrid = new UniformGrid();
-            frameView.Add(uniformGrid);
+            uniformGrid.Width  = Dim.Fill();
+            uniformGrid.Height = Dim.Fill();
+            
+            categoryView.Add(uniformGrid);
         }
 
-        parent.Add(frameView);
+        parent.Add(categoryView);
 
         return uniformGrid;
     }
 
     protected virtual IEnumerable<string> GetCategories()
     {
+        var registry = new PropertyEditorRegistry();
         return _boundModel.GetType().GetProperties()
-                          .Select(t => t.GetCustomAttribute<CategoryAttribute>()?.Category ??
-                                       "General").Distinct().ToList();
+            .Where(p => registry.Resolve(p) != null)
+            .Select(p => p.GetCustomAttribute<CategoryAttribute>()?.Category ?? DefaultCategory)
+            .Distinct()
+            .ToList();
     }
-
     protected virtual Dictionary<string, CategoryLayoutAttribute> GetCategoryLayoutDefinitionLookup()
     {
         return _boundModel.GetType().GetCustomAttributes<CategoryLayoutAttribute>()
@@ -110,14 +131,14 @@ public class ReflectedView : FrameView
 
         foreach (var property in type.GetProperties())
         {
-            var propertyEditor = ReflectedEditorRegistry.GetPropertyEditor(property.PropertyType);
+            var propertyEditor = new PropertyEditorRegistry().Resolve(property);
 
             if (propertyEditor == null)
             {
                 continue;
             }
 
-            var category = property.GetCustomAttribute<CategoryAttribute>()?.Category ?? "General";
+            var category = property.GetCustomAttribute<CategoryAttribute>()?.Category ?? DefaultCategory;
 
             var categoryView = GetCategoryView(category);
 

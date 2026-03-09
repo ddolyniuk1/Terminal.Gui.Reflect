@@ -66,49 +66,39 @@
                 var totalWidth  = Viewport.Width;
                 var totalHeight = Viewport.Height;
 
-                var subviewCount = Subviews.Count;
-                if (subviewCount != _lastChildCount)
-                {
-                    _cachedChildren.Clear();
-                    foreach (var sub in Subviews)
-                    {
-                        if (sub.Visible)
-                        {
-                            _cachedChildren.Add(sub);
-                        }
-                    }
+                _cachedChildren.Clear();
+                foreach (var sub in Subviews)
+                    if (sub.Visible)
+                        _cachedChildren.Add(sub);
 
-                    _lastChildCount = subviewCount;
-                }
+                _lastChildCount = _cachedChildren.Count;
 
                 var count = _cachedChildren.Count;
-                if (count == 0)
-                {
-                    return;
-                }
-
-                if (totalWidth == _lastWidth && totalHeight == _lastHeight)
-                {
-                    return;
-                }
+                if (count == 0) return;
 
                 _lastWidth  = totalWidth;
                 _lastHeight = totalHeight;
 
-                var cols = _columns;
-                var rows = _rows;
+                int cols, rows;
 
-                if (cols <= 0 && rows <= 0)
+                if (_columns <= 0 && _rows <= 0)
                 {
                     cols = count;
                     rows = 1;
                 }
-                else if (cols <= 0)
+                else if (_columns <= 0)
                 {
+                    rows = _rows;
                     cols = (int)Math.Ceiling((double)count / rows);
                 }
-                else if (rows <= 0)
+                else if (_rows <= 0)
                 {
+                    cols = Math.Min(count, _columns);
+                    rows = (int)Math.Ceiling((double)count / cols);
+                }
+                else
+                {
+                    cols = Math.Min(count, _columns);
                     rows = (int)Math.Ceiling((double)count / cols);
                 }
 
@@ -128,27 +118,13 @@
 
                     var child = _cachedChildren[i];
 
-                    var newX = Pos.Absolute(x);
-                    var newY = Pos.Absolute(y);
-                    var newW = Dim.Absolute(cellWidth);
-
-                    if (child.X != newX)
-                    {
-                        child.X = newX;
-                    }
-
-                    if (child.Y != newY)
-                    {
-                        child.Y = newY;
-                    }
-
-                    if (child.Width != newW)
-                    {
-                        child.Width = newW;
-                    }
+                    child.X      = Pos.Absolute(x);
+                    child.Y      = Pos.Absolute(y);
+                    child.Width  = Dim.Absolute(cellWidth);
+                    child.Height = Dim.Absolute(cellHeight);
                 }
-            }
-
+            }            
+            
             /// <summary>
             ///     Convenience helper — add a view and queue a re-layout.
             /// </summary>
