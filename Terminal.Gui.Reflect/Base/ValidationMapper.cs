@@ -32,7 +32,7 @@ namespace Terminal.Gui.Reflect.Base
         {
             var attributes = property.GetCustomAttributes<ValidationAttribute>();
             var context    = new ValidationContext(value ?? new object()) { MemberName = property.Name };
-
+            
             foreach (var attr in attributes)
             {
                 var result = attr.GetValidationResult(value, context);

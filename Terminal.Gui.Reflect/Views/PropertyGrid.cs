@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Settings;
 using Terminal.Gui.Reflect.Views.TerminalGuiComponents;
+using Terminal.Gui.ViewBase;
+using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Views;
 

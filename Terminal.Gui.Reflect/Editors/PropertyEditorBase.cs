@@ -1,7 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using Terminal.Gui.Configuration;
+using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Settings;
+using Terminal.Gui.ViewBase;
+using Terminal.Gui.Views;
+using Attribute = System.Attribute;
 
 namespace Terminal.Gui.Reflect.Editors
 {
@@ -11,8 +16,24 @@ namespace Terminal.Gui.Reflect.Editors
     /// </summary>
     public abstract class PropertyEditorBase
     {
+        private const string PropertyEditorValidationErrorScheme = "ConversionFailedTextEditorScheme";
+        
         public abstract View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings);
 
+        public PropertyEditorBase()
+        {
+            Scheme scheme;
+            try
+            {
+                scheme = SchemeManager.GetScheme(PropertyEditorValidationErrorScheme);
+            }
+            catch (Exception e)
+            {
+                scheme = CreateErrorColorScheme();
+                SchemeManager.AddScheme(PropertyEditorValidationErrorScheme, scheme);
+            }
+        }
+        
         /// <summary>
         /// Return true if this editor can handle the given property.
         /// The editor registry calls this in priority order and uses the first match.
@@ -60,8 +81,10 @@ namespace Terminal.Gui.Reflect.Editors
                 Width           = Dim.Fill(),
                 X               = 0,
                 Y               = Pos.Bottom(above),
-                ColorScheme     = CreateErrorColorScheme(),
+                SchemeName     = PropertyEditorValidationErrorScheme,
             };
+            
+            
             container.Add(lbl);
             return lbl;
         }
@@ -76,12 +99,12 @@ namespace Terminal.Gui.Reflect.Editors
             return result.IsValid;
         }
 
-        private static ColorScheme CreateErrorColorScheme() => new()
+        private static Scheme CreateErrorColorScheme() => new()
         {
-            Normal   = new Attribute(Color.BrightRed,  Color.Black),
-            Focus    = new Attribute(Color.BrightRed,  Color.Black),
-            HotNormal = new Attribute(Color.BrightRed, Color.Black),
-            HotFocus  = new Attribute(Color.BrightRed, Color.Black),
+            Normal   = new Drawing.Attribute(Color.BrightRed,  Color.Black),
+            Focus    = new Drawing.Attribute(Color.BrightRed,  Color.Black),
+            HotNormal = new Drawing.Attribute(Color.BrightRed, Color.Black),
+            HotFocus  = new Drawing.Attribute(Color.BrightRed, Color.Black),
         };
     }
 }

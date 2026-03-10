@@ -1,4 +1,6 @@
-﻿namespace Terminal.Gui.Reflect.Views
+﻿using Terminal.Gui.ViewBase;
+
+namespace Terminal.Gui.Reflect.Views
 {
     namespace TerminalGuiComponents
     {
@@ -14,8 +16,6 @@
             private readonly List<View> _cachedChildren = new();
             private          int        _columns;
 
-            private int _lastChildCount = -1;
-            private int _lastWidth      = -1, _lastHeight = -1;
             private int _rows;
 
             /// <param name="rows">Number of rows. Use -1 for auto.</param>
@@ -55,9 +55,9 @@
             /// <summary>Gap (in rows) between rows.</summary>
             public int VerticalSpacing { get; set; } = 0;
 
-            protected override void OnSubviewsLaidOut(LayoutEventArgs args)
+            protected override void OnSubViewsLaidOut(LayoutEventArgs args)
             {
-                base.OnSubviewsLaidOut(args);
+                base.OnSubViewsLaidOut(args);
                 ArrangeChildren();
             }
 
@@ -67,17 +67,12 @@
                 var totalHeight = Viewport.Height;
 
                 _cachedChildren.Clear();
-                foreach (var sub in Subviews)
+                foreach (var sub in SubViews)
                     if (sub.Visible)
                         _cachedChildren.Add(sub);
 
-                _lastChildCount = _cachedChildren.Count;
-
                 var count = _cachedChildren.Count;
                 if (count == 0) return;
-
-                _lastWidth  = totalWidth;
-                _lastHeight = totalHeight;
 
                 int cols, rows;
 

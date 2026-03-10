@@ -39,6 +39,13 @@ namespace Terminal.Gui.Reflect.TestApp
             set => SetField(ref field, value);
         }
 
+        [Category("Numbers")]
+        public double SomeDouble
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+
         [Browsable(false)]
         [Category("Bools")]
         public bool HiddenMember

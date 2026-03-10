@@ -1,3 +1,5 @@
+using Terminal.Gui.Drawing;
+
 namespace Terminal.Gui.Reflect.Settings;
 
 public class PropertyGridSettings
@@ -16,6 +18,8 @@ public class PropertyGridSettings
     
     public Thickness CategoryMargin { get; set; } = new  Thickness(1);
     public Thickness CategoryPadding { get; set; } = new  Thickness(0);
+    
+    public string? ConversionErrorColorSchemeName { get; set; }
 }
 
 public enum EVerticalContentAlignment

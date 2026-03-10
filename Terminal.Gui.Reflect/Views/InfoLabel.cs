@@ -1,5 +1,8 @@
 using System.ComponentModel;
 using System.Drawing;
+using Terminal.Gui.Drawing;
+using Terminal.Gui.Input;
+using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Views;
 
@@ -66,51 +69,46 @@ public sealed class InfoLabel : Label
         CanFocus  = true;
         Width     = 1;
         Height    = 1;
-
-        MouseEnter  += OnMouseEnter;
-        MouseLeave  += OnMouseLeave;
-        MouseClick  += OnMouseClick;
-
+ 
         KeyDown += OnKeyDown;
 
         Removed += (_, _) => DestroyPopup();
         Text = Icon;
     }
 
-    protected override bool OnDrawingText()
-    {
-        var attr = HasFocus ? GetFocusColor() : GetNormalColor();
-        Driver?.SetAttribute(attr);
-        Move(0, 0);
-        Driver?.AddStr(Icon);
-        return true;
-    }
-
-    protected override bool OnDrawingContent()
-    {
-        return base.OnDrawingContent();
-    }
-
-    private void OnMouseEnter(object? sender, CancelEventArgs e)
-    {
-        if (_pinnedOpen) return;
-        _hoverOpen = true;
-        ShowPopup();
-    }
-
-    private void OnMouseLeave(object? sender, EventArgs? e)
-    {
+    protected override void OnMouseLeave()
+    { 
         _hoverOpen = false;
         if (!_pinnedOpen)
             HidePopup();
+        base.OnMouseLeave();
     }
 
-    private void OnMouseClick(object? sender, MouseEventArgs e)
+    protected override bool OnDrawingText()
+    {
+        SetAttributeForRole(HasFocus ? VisualRole.Focus : VisualRole.Normal);
+        Move(0, 0);
+        AddStr(Icon);
+        return true;
+    }
+
+    protected override bool OnMouseEnter(CancelEventArgs eventArgs)
+    {
+        if (!_pinnedOpen)
+        { 
+            _hoverOpen = true;
+            ShowPopup();
+        }
+        
+        return base.OnMouseEnter(eventArgs);
+    }
+ 
+    protected override bool OnMouseEvent(Mouse mouse)
     {
         TogglePin();
-        e.Handled = true;
+        mouse.Handled = true;
+        return base.OnMouseEvent(mouse);
     }
-
 
     private void OnKeyDown(object? sender, Key e)
     {
@@ -146,8 +144,8 @@ public sealed class InfoLabel : Label
 
         // Position: prefer right of this view, fall back to left if off-screen
         var screenRect = FrameToScreen();
-        var screenW = Driver?.Cols ?? 80;
-        var screenH = Driver?.Rows ?? 24;
+        var screenW = App?.Screen.Width ?? 80;
+        var screenH = App?.Screen.Height ?? 24;
 
         var popX = screenRect.X + screenRect.Width;
         var popY = screenRect.Y;
@@ -190,20 +188,20 @@ public sealed class InfoLabel : Label
             _popup.Title = " ℹ ";
         }
 
-        Application.Top?.Add(_popup);
-        Application.Top?.SetNeedsDraw();
+        App?.TopRunnableView?.Add(_popup);
+        App?.TopRunnableView?.SetNeedsDraw();
     }
 
     private void HidePopup()
     {
         DestroyPopup();
-        Application.Top?.SetNeedsDraw();
+        App?.TopRunnableView?.SetNeedsDraw();
     }
 
     private void DestroyPopup()
     {
         if (_popup is null) return;
-        Application.Top?.Remove(_popup);
+        App?.TopRunnableView?.Remove(_popup);
         _popup.Dispose();
         _popup = null;
     }

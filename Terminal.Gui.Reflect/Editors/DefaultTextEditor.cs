@@ -1,9 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Terminal.Gui.App;
+using Terminal.Gui.Configuration;
+using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Bindings;
 using Terminal.Gui.Reflect.Settings;
 using Terminal.Gui.Reflect.Views;
+using Terminal.Gui.ViewBase;
+using Terminal.Gui.Views;
+using Attribute = System.Attribute;
 
 namespace Terminal.Gui.Reflect.Editors
 {
@@ -14,6 +20,8 @@ namespace Terminal.Gui.Reflect.Editors
     /// </summary>
     public class DefaultTextEditor : PropertyEditorBase
     {
+        private const string DefaultTextEditorConversionFailedSchemeName = "DefaultTextEditorConversionFailedScheme";
+
         // CanHandleProperty is inherited from PropertyEditorBase (browsable = true)
         // so this is the catch-all fallback — register it at lowest priority.
         public override View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings)
@@ -82,13 +90,7 @@ namespace Terminal.Gui.Reflect.Editors
                 TabStop  = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
                 CanFocus = true,
             };
-
-            var prompt = GetPrompt(property);
-            if (!string.IsNullOrEmpty(prompt))
-            {
-                textField.Caption = prompt;
-            }
-
+ 
             container.Add(textField);
 
             var validationLabel = AddValidationLabel(container, textField);
@@ -100,9 +102,28 @@ namespace Terminal.Gui.Reflect.Editors
 
             textField.TextChanging += (_, e) =>
             {
-                if (!binding.PushToModel(() => e.NewValue))
+                try
                 {
-                    e.Cancel = true;
+                    binding.PushToModel(() => e.Result);
+                    textField.SchemeName = container.SchemeName;
+                }
+                catch
+                {
+                    if (string.IsNullOrEmpty(propertyGridSettings.ConversionErrorColorSchemeName))
+                    {
+                        var parentScheme = SchemeManager.GetScheme(owner.App!.TopRunnableView!.SchemeName!);
+                        SchemeManager.AddScheme(DefaultTextEditorConversionFailedSchemeName, new Scheme
+                        {
+                            Focus = new Drawing.Attribute(Color.BrightRed, parentScheme!.Focus.Background),
+                            Normal = new Drawing.Attribute(Color.BrightRed, parentScheme!.Normal.Background)
+                        });
+                        textField.SchemeName = DefaultTextEditorConversionFailedSchemeName;
+                    }
+                    else
+                    {
+                        textField.SchemeName =  propertyGridSettings.ConversionErrorColorSchemeName;
+                    }
+                    textField.SetNeedsDraw();
                 }
             };
 
