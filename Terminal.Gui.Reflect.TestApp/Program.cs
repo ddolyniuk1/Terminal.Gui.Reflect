@@ -82,7 +82,7 @@ public class ExampleWindow : Window
             
         };
         var reflected = new PropertyGrid(model, settings);
-        reflected.Width  = Dim.Fill();
+        reflected.Width  = Dim.Auto(DimAutoStyle.Text);
         reflected.Height = Dim.Fill();
         Add(reflected);
        
