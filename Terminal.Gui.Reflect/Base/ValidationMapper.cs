@@ -97,7 +97,7 @@ namespace Terminal.Gui.Reflect
         /// <summary>
         /// Returns the [Display] description / tooltip.
         /// </summary>
-        public static string? GetDescription(PropertyInfo property) =>
+        public static string? GetDescription(PropertyInfo property) => property.GetCustomAttribute<DescriptionAttribute>()?.Description ??
             property.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
 
         /// <summary>

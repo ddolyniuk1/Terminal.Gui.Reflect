@@ -9,7 +9,7 @@ namespace Terminal.Gui.Reflect.Drawers
     /// </summary>
     public abstract class PropertyEditorBase
     {
-        public abstract View Render(View owner, object model, PropertyInfo property);
+        public abstract View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings);
 
         /// <summary>
         /// Return true if this editor can handle the given property.

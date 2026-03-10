@@ -3,6 +3,7 @@ using Terminal.Gui;
 using Terminal.Gui.Reflect;
 using Terminal.Gui.Reflect.TerminalGuiComponents;
 using Terminal.Gui.Reflect.TestApp;
+using Terminal.Gui.Reflect.Views;
 
 Application.Run<ExampleWindow>();
 
@@ -84,7 +85,7 @@ public class ExampleWindow : Window
         reflected.Width  = Dim.Fill();
         reflected.Height = Dim.Fill();
         Add(reflected);
-        
+       
         model.PropertyChanged += (sender, args) =>
         {
             Title = model.SomeText + " " + model.SomeBool;

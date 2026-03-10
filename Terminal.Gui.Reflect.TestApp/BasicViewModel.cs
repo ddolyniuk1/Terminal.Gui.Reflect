@@ -25,6 +25,7 @@ namespace Terminal.Gui.Reflect.TestApp
         [Display(Prompt = "This is some text")]
         [MinLength(5)]
         [MaxLength(50)]
+        [Description("This is some text")]
         public string? SomeText
         {
             get;

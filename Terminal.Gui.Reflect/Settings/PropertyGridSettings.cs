@@ -8,8 +8,8 @@ public class PropertyGridSettings
 
     public bool ShowBorder { get; set; } = true;
     
-    public EVerticalContentAlignment ContentVerticalAlignment { get; set; } = EVerticalContentAlignment.Top;
-    public EHorizontalContentAlignment HorizontalVerticalAlignment { get; set; } = EHorizontalContentAlignment.Left;
+    public EVerticalContentAlignment VerticalContentAlignment { get; set; } = EVerticalContentAlignment.Top;
+    public EHorizontalContentAlignment HorizontalContentAlignment { get; set; } = EHorizontalContentAlignment.Left;
     
     public Thickness Margin { get; set; } = new  Thickness(1);
     public Thickness Padding { get; set; } = new  Thickness(0);

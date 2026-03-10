@@ -40,24 +40,5 @@ namespace Terminal.Gui.Reflect
         public PropertyEditorBase? Resolve(PropertyInfo property) =>
             _editors.Select(e => e.Editor)
                     .FirstOrDefault(e => e.CanHandleProperty(property));
-
-        /// <summary>
-        /// Renders all browsable properties of <paramref name="model"/> into <paramref name="owner"/>,
-        /// ordered by [Display(Order = n)].
-        /// </summary>
-        public IEnumerable<View> RenderAll(View owner, object model)
-        {
-            var properties = model.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead)
-                .OrderBy(ValidationMapper.GetOrder);
-
-            foreach (var property in properties)
-            {
-                var editor = Resolve(property);
-                if (editor == null) continue;
-                yield return editor.Render(owner, model, property);
-            }
-        }
     }
 }

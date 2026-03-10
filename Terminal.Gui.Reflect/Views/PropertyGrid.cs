@@ -159,7 +159,7 @@ public class PropertyGrid : FrameView
 
             var categoryView = GetCategoryView(category);
 
-            var editorView = propertyEditor.Render(this, _boundModel, property);
+            var editorView = propertyEditor.Render(this, _boundModel, property, _settings);
             categoryView.Add(editorView);
         }
     }

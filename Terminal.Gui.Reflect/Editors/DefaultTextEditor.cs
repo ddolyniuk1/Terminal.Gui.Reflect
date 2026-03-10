@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Terminal.Gui.Reflect.Views;
 
 namespace Terminal.Gui.Reflect.Drawers
 {
@@ -12,7 +13,7 @@ namespace Terminal.Gui.Reflect.Drawers
     {
         // CanHandleProperty is inherited from PropertyEditorBase (browsable = true)
         // so this is the catch-all fallback — register it at lowest priority.
-        public override View Render(View owner, object model, PropertyInfo property)
+        public override View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings)
         {
             var container = new View
             {
@@ -27,11 +28,41 @@ namespace Terminal.Gui.Reflect.Drawers
             {
                 Text   = GetLabel(property) + required + ":",
                 Height = 1,
-                Width  = Dim.Fill(),
+                Width  = Dim.Auto(DimAutoStyle.Text),
                 X      = 0,
                 Y      = 0,
             };
+
+            label.X = propertyGridSettings.HorizontalContentAlignment switch
+            {
+                EHorizontalContentAlignment.Left => 0,
+                EHorizontalContentAlignment.Center => Pos.Center(),
+                EHorizontalContentAlignment.Right => Pos.AnchorEnd(1),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            label.Y = propertyGridSettings.VerticalContentAlignment switch
+            {
+                EVerticalContentAlignment.Top => 0,
+                EVerticalContentAlignment.Center => Pos.Center(),
+                EVerticalContentAlignment.Bottom => Pos.AnchorEnd(1),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
             container.Add(label);
+
+            var description = GetDescription(property);
+            if (description != null)
+            {
+                var infoLabel = new InfoLabel(description);
+                infoLabel.Y  = label.Y;
+                infoLabel.X  = Pos.Right(label) + 3;
+                
+                infoLabel.Width  = Dim.Auto(DimAutoStyle.Text);
+                infoLabel.Height = 1;
+                
+                container.Add(infoLabel);
+            }
 
             var dataType   = ValidationMapper.GetDataType(property);
             var isPassword = dataType == DataType.Password;
@@ -41,7 +72,7 @@ namespace Terminal.Gui.Reflect.Drawers
             {
                 Width    = Dim.Fill(),
                 Height   = 1,
-                X        = 0,
+                X        = label.X,
                 Y        = Pos.Bottom(label),
                 Secret   = isPassword && !isReadOnly,
                 ReadOnly = isReadOnly,

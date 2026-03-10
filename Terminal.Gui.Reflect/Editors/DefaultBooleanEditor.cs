@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace Terminal.Gui.Reflect.Drawers
 {
@@ -15,7 +16,7 @@ namespace Terminal.Gui.Reflect.Drawers
             return t == typeof(bool);
         }
 
-        public override View Render(View owner, object model, PropertyInfo property)
+        public override View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings)
         {
             var isNullable = Nullable.GetUnderlyingType(property.PropertyType) != null;
             var isReadOnly = IsReadOnly(property);
@@ -41,6 +42,21 @@ namespace Terminal.Gui.Reflect.Drawers
                 AllowCheckStateNone = isNullable,
                 TabStop   = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
             };
+
+            checkbox.X = propertyGridSettings.HorizontalContentAlignment switch
+            {
+                EHorizontalContentAlignment.Left => 0,
+                EHorizontalContentAlignment.Center => Pos.Center(),
+                EHorizontalContentAlignment.Right => Pos.AnchorEnd()
+            };
+
+            checkbox.Y = propertyGridSettings.VerticalContentAlignment switch
+            {
+                EVerticalContentAlignment.Top => 0,
+                EVerticalContentAlignment.Center => Pos.Center(),
+                EVerticalContentAlignment.Bottom => Pos.AnchorEnd()
+            };
+            
             container.Add(checkbox);
 
             var validationLabel = AddValidationLabel(container, checkbox);
