@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Terminal.Gui;
 using Terminal.Gui.Reflect;
-using Terminal.Gui.Reflect.TerminalGuiComponents;
+using Terminal.Gui.Reflect.Settings;
 using Terminal.Gui.Reflect.TestApp;
 using Terminal.Gui.Reflect.Views;
 

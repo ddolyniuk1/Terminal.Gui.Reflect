@@ -1,4 +1,4 @@
-using Terminal.Gui;
+namespace Terminal.Gui.Reflect.Settings;
 
 public class PropertyGridSettings
 {

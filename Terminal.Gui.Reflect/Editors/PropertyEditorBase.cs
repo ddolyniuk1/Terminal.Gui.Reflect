@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.Reflect.Settings;
 
-namespace Terminal.Gui.Reflect.Drawers
+namespace Terminal.Gui.Reflect.Editors
 {
     /// <summary>
     /// Base class for all property editors.

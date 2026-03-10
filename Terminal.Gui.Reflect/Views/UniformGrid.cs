@@ -1,4 +1,4 @@
-﻿namespace Terminal.Gui.Reflect
+﻿namespace Terminal.Gui.Reflect.Views
 {
     namespace TerminalGuiComponents
     {

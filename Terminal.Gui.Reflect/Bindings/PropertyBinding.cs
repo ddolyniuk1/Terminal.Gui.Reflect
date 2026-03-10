@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Terminal.Gui.Reflect
+namespace Terminal.Gui.Reflect.Bindings
 {
     /// <summary>
     /// Two-way binding between a model property and ANY control.

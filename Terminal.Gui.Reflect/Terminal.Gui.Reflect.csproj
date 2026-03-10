@@ -4,6 +4,13 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>Terminal.Gui.Reflect</Title>
+    <Authors>David Dolyniuk</Authors>
+    <Description>A Terminal.Gui extension including various useful auto-populating UI elements and scaffolding</Description>
+    <Copyright>2026</Copyright>
+    <PackageLicenseUrl>https://mit-license.org/</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/ddolyniuk1/Terminal.Gui.Reflect</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

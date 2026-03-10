@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.Reflect.Bindings;
+using Terminal.Gui.Reflect.Settings;
 using Terminal.Gui.Reflect.Views;
 
-namespace Terminal.Gui.Reflect.Drawers
+namespace Terminal.Gui.Reflect.Editors
 {
     /// <summary>
     /// Fallback editor for string and primitive value-type properties.

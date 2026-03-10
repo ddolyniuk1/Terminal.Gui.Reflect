@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace Terminal.Gui.Reflect
+namespace Terminal.Gui.Reflect.Base
 {
     public record ValidationResult(bool IsValid, string? ErrorMessage);
 

@@ -2,9 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Terminal.Gui.Reflect.Attributes;
-using Terminal.Gui.Reflect.TerminalGuiComponents;
+using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.Reflect.Settings;
+using Terminal.Gui.Reflect.Views.TerminalGuiComponents;
 
-namespace Terminal.Gui.Reflect;
+namespace Terminal.Gui.Reflect.Views;
 
 public class PropertyGrid : FrameView
 {

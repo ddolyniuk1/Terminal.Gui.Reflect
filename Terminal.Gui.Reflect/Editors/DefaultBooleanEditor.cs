@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
+using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.Reflect.Bindings;
+using Terminal.Gui.Reflect.Settings;
 
-namespace Terminal.Gui.Reflect.Drawers
+namespace Terminal.Gui.Reflect.Editors
 {
     /// <summary>
     /// Renders a <see cref="CheckBox"/> for <c>bool</c> and <c>bool?</c> properties.

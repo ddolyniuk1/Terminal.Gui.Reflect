@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Terminal.Gui.Reflect.Drawers;
+using Terminal.Gui.Reflect.Editors;
 
-namespace Terminal.Gui.Reflect
+namespace Terminal.Gui.Reflect.Base
 {
     /// <summary>
     /// Maintains an ordered list of <see cref="PropertyEditorBase"/> instances and picks
