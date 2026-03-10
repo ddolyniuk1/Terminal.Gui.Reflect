@@ -9,10 +9,12 @@
     <Authors>David Dolyniuk</Authors>
     <Description>A Terminal.Gui extension including various useful auto-populating UI elements and scaffolding</Description>
     <Copyright>2026</Copyright>
-    <PackageLicenseUrl>https://mit-license.org/</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/ddolyniuk1/Terminal.Gui.Reflect</RepositoryUrl>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <Version>0.0.0</Version>
+  </PropertyGroup>
   <ItemGroup>
 	  <PackageReference Include="Terminal.Gui" Version="2.0.0-alpha.*" />
   </ItemGroup>
