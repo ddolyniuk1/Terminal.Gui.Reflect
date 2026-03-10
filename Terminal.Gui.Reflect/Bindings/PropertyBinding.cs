@@ -58,17 +58,21 @@ namespace Terminal.Gui.Reflect
         /// Call from a UI-changed event to push the current UI value into the model.
         /// Skips if a model→UI update is already in progress (prevents loops).
         /// </summary>
-        public void PushToModel(Func<T?> uiGetter)
+        public bool PushToModel(Func<T?> uiGetter)
         {
-            if (_updating) return;
+            if (_updating) return false;
             _updating = true;
             try
             {
                 var uiValue = uiGetter();
                 _property.SetValue(_model, CoerceToPropertyType(uiValue));
                 ValueChanged?.Invoke(uiValue);
+                return true;
             }
-            catch { /* type coercion failed — leave model unchanged */ }
+            catch
+            {
+                return false;
+            }
             finally { _updating = false; }
         }
 

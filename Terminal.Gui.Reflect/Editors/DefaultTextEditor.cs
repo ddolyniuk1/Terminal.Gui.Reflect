@@ -66,7 +66,10 @@ namespace Terminal.Gui.Reflect.Drawers
 
             textField.TextChanging += (_, e) =>
             {
-                binding.PushToModel(() => e.NewValue);
+                if (!binding.PushToModel(() => e.NewValue))
+                {
+                    e.Cancel = true;
+                }
             };
 
             binding.ValueChanged += value =>

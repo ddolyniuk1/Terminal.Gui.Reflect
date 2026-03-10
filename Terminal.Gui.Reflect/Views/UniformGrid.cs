@@ -81,25 +81,23 @@
 
                 int cols, rows;
 
-                if (_columns <= 0 && _rows <= 0)
+                switch (_columns)
                 {
-                    cols = count;
-                    rows = 1;
-                }
-                else if (_columns <= 0)
-                {
-                    rows = _rows;
-                    cols = (int)Math.Ceiling((double)count / rows);
-                }
-                else if (_rows <= 0)
-                {
-                    cols = Math.Min(count, _columns);
-                    rows = (int)Math.Ceiling((double)count / cols);
-                }
-                else
-                {
-                    cols = Math.Min(count, _columns);
-                    rows = (int)Math.Ceiling((double)count / cols);
+                    case <= 0 when _rows <= 0:
+                        cols = count;
+                        rows = 1;
+                        break;
+                    case <= 0:
+                        rows = _rows;
+                        cols = (int)Math.Ceiling((double)count / rows);
+                        break;
+                    default:
+                    {
+                        cols = Math.Min(count, _columns);
+                        rows = (int)Math.Ceiling((double)count / cols);
+
+                        break;
+                    }
                 }
 
                 var totalHSpacing = HorizontalSpacing * (cols - 1);

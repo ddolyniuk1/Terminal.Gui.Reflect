@@ -75,7 +75,12 @@ public class ExampleWindow : Window
         ConfigurationManager.Apply();
         var sw        = Stopwatch.StartNew();
         var model = new BasicViewModel();
-        var reflected = new ReflectedView(model);
+        var settings = new PropertyGridSettings()
+        {
+            ShowBorder = false,
+            
+        };
+        var reflected = new PropertyGrid(model, settings);
         reflected.Width  = Dim.Fill();
         reflected.Height = Dim.Fill();
         Add(reflected);

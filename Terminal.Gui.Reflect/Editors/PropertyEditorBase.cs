@@ -21,7 +21,17 @@ namespace Terminal.Gui.Reflect.Drawers
         protected string  GetLabel(PropertyInfo p)       => ValidationMapper.GetLabel(p);
         protected string? GetPrompt(PropertyInfo p)      => ValidationMapper.GetPrompt(p);
         protected string? GetDescription(PropertyInfo p) => ValidationMapper.GetDescription(p);
+        private static readonly HashSet<Type> IntegerTypes = new()
+        {
+            typeof(int),    typeof(int?),
+            typeof(long),   typeof(long?),
+            typeof(short),  typeof(short?),
+            typeof(byte),   typeof(byte?),
+        };
 
+        private static bool IsNumberType(Type type) =>
+            IntegerTypes.Contains(type) ||
+            IntegerTypes.Contains(Nullable.GetUnderlyingType(type) ?? type);
         protected bool IsBrowsable(PropertyInfo property)
         {
             var attr = property.GetCustomAttribute<BrowsableAttribute>();

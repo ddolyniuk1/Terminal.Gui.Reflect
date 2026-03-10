@@ -60,7 +60,6 @@ namespace Terminal.Gui.Reflect
 
         /// <summary>
         /// Produces a short, symbol-oriented message for built-in attributes.
-        /// Examples:  "Required"  "≥ 5 chars"  "≤ 100"  "5–100 chars"  "Invalid email"
         /// </summary>
         private static string GetCompactMessage(ValidationAttribute attr) =>
             attr switch
@@ -156,13 +155,11 @@ namespace Terminal.Gui.Reflect
                 "_errors",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
-            if (errorsField?.GetValue(model) is IDictionary<string, List<string>> dict)
-            {
-                if (result.IsValid)
-                    dict.Remove(propertyName);
-                else
-                    dict[propertyName] = [result.ErrorMessage ?? "Invalid"];
-            }
+            if (errorsField?.GetValue(model) is not IDictionary<string, List<string>> dict) return;
+            if (result.IsValid)
+                dict.Remove(propertyName);
+            else
+                dict[propertyName] = [result.ErrorMessage ?? "Invalid"];
         }
     }
 }

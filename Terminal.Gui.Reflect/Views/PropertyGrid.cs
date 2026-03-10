@@ -1,20 +1,23 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.TerminalGuiComponents;
 
 namespace Terminal.Gui.Reflect;
 
-public class ReflectedView : FrameView
+public class PropertyGrid : FrameView
 {
     private readonly object _boundModel;
     protected virtual string DefaultCategory => "General";
 
     private readonly Dictionary<string, View> _categoryViewDictionary = new();
+    private readonly PropertyGridSettings _settings;
 
-    public ReflectedView(object boundModel)
+    public PropertyGrid(object boundModel, PropertyGridSettings? settings = null)
     {
-        _boundModel = boundModel;
+        _settings = settings ?? new PropertyGridSettings();
+        _boundModel = boundModel ?? throw new ArgumentNullException(nameof(boundModel));
         Initialize();
     }
 
@@ -62,7 +65,6 @@ public class ReflectedView : FrameView
     {
         View categoryView;
        
-
         if (hasCategories)
         {
             categoryView = new FrameView();
@@ -76,6 +78,9 @@ public class ReflectedView : FrameView
         categoryView.CanFocus = true;
         categoryView.Width  = Dim.Fill();
         categoryView.Height = Dim.Fill();
+
+        categoryView.Margin!.Thickness = _settings.CategoryMargin;
+        categoryView.Padding!.Thickness = _settings.CategoryPadding;
         
         UniformGrid uniformGrid;
 
@@ -124,10 +129,22 @@ public class ReflectedView : FrameView
         var type = _boundModel.GetType();
 
         var displayNameAttribute = type.GetCustomAttribute<DisplayNameAttribute>();
-        if (displayNameAttribute != null)
+        var displayAttribute = type.GetCustomAttribute<DisplayAttribute>();
+        if (displayNameAttribute != null || displayAttribute != null)
         {
-            Title = displayNameAttribute?.DisplayName ?? type.Name;
+            if (_settings.ShowTitle)
+            {
+                Title = displayNameAttribute?.DisplayName ?? displayAttribute?.Name ?? type.Name;  
+            }
         }
+        
+        if (!_settings.ShowBorder)
+        {
+            BorderStyle = LineStyle.None;
+        }
+
+        Margin!.Thickness = _settings.Margin;
+        Padding!.Thickness = _settings.Padding;
 
         foreach (var property in type.GetProperties())
         {
