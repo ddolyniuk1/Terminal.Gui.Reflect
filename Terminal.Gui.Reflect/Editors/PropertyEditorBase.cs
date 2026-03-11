@@ -99,12 +99,16 @@ namespace Terminal.Gui.Reflect.Editors
             return result.IsValid;
         }
 
-        private static Scheme CreateErrorColorScheme() => new()
+        private static Scheme CreateErrorColorScheme()
         {
-            Normal   = new Drawing.Attribute(Color.BrightRed,  Color.Black),
-            Focus    = new Drawing.Attribute(Color.BrightRed,  Color.Black),
-            HotNormal = new Drawing.Attribute(Color.BrightRed, Color.Black),
-            HotFocus  = new Drawing.Attribute(Color.BrightRed, Color.Black),
-        };
+            var baseScheme = SchemeManager.GetScheme("Base");
+            return new Scheme
+            {
+                Normal = new Drawing.Attribute(Color.BrightRed, baseScheme.Normal.Background),
+                Focus = new Drawing.Attribute(Color.BrightRed, baseScheme.Focus.Background),
+                HotNormal = new Drawing.Attribute(Color.BrightRed, baseScheme.HotNormal.Background),
+                HotFocus = new Drawing.Attribute(Color.BrightRed, baseScheme.HotFocus.Background),
+            };
+        }
     }
 }

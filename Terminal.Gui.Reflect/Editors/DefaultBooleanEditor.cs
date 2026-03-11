@@ -32,6 +32,7 @@ namespace Terminal.Gui.Reflect.Editors
                 CanFocus = true,
                 Width    = Dim.Fill(),
                 Height   = Dim.Auto(),
+                ShadowStyle = ShadowStyle.None,
             };
             container.Padding!.Thickness = new Thickness(1);
 
@@ -43,6 +44,7 @@ namespace Terminal.Gui.Reflect.Editors
                 X         = 0,
                 Y         = 0,
                 
+                ShadowStyle = ShadowStyle.None,
                 // Allow indeterminate state for nullable bools
                 AllowCheckStateNone = isNullable,
                 TabStop   = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
@@ -65,8 +67,7 @@ namespace Terminal.Gui.Reflect.Editors
             container.Add(checkbox);
 
             var validationLabel = AddValidationLabel(container, checkbox);
-
-            // ── Binding ────────────────────────────────────────────────────────
+ 
             // Use bool? internally so we handle both bool and bool? properties uniformly.
             var binding = new PropertyBinding<bool?>(
                 model,

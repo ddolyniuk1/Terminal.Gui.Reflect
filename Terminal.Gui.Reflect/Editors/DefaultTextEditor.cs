@@ -3,6 +3,7 @@ using System.Reflection;
 using Terminal.Gui.App;
 using Terminal.Gui.Configuration;
 using Terminal.Gui.Drawing;
+using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Bindings;
 using Terminal.Gui.Reflect.Settings;
@@ -26,11 +27,11 @@ namespace Terminal.Gui.Reflect.Editors
         // so this is the catch-all fallback — register it at lowest priority.
         public override View Render(View owner, object model, PropertyInfo property, PropertyGridSettings propertyGridSettings)
         {
-            var container = new View
+            var container = new View()
             {
                 CanFocus = true,
-                Width    = Dim.Fill(),
-                Height   = Dim.Auto(),
+                Width    = 30,
+                Height   = 15,
             };
             container.Padding!.Thickness = new Thickness(1);
 
@@ -63,16 +64,18 @@ namespace Terminal.Gui.Reflect.Editors
             container.Add(label);
 
             var description = GetDescription(property);
-            if (description != null)
+            
+            var infoLabel = new InfoLabel(description ?? "");
+            infoLabel.Y  = 0;
+            infoLabel.X  = Pos.Right(label) + 3;
+            
+            infoLabel.Width  = Dim.Auto(DimAutoStyle.Text);
+            infoLabel.Height = 1;
+                
+            container.Add(infoLabel);
+            if (description == null)
             {
-                var infoLabel = new InfoLabel(description);
-                infoLabel.Y  = label.Y;
-                infoLabel.X  = Pos.Right(label) + 3;
-                
-                infoLabel.Width  = Dim.Auto(DimAutoStyle.Text);
-                infoLabel.Height = 1;
-                
-                container.Add(infoLabel);
+                infoLabel.Visible = false;
             }
 
             var dataType   = ValidationMapper.GetDataType(property);
@@ -82,15 +85,62 @@ namespace Terminal.Gui.Reflect.Editors
             var textField = new TextField
             {
                 Width    = Dim.Fill(),
-                Height   = 1,
-                X        = label.X,
+                Height   = 3,
+                X        = 0,
                 Y        = Pos.Bottom(label),
                 Secret   = isPassword && !isReadOnly,
                 ReadOnly = isReadOnly,
                 TabStop  = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
                 CanFocus = true,
+                BorderStyle = LineStyle.Rounded,
             };
- 
+            textField.Border!.Thickness = new Thickness(1);
+
+            var openDialogAttribute = property.GetCustomAttribute<OpenDialogAttribute>();
+            if (openDialogAttribute != null)
+            {
+                var openDialogBtn = new Button();
+                openDialogBtn.Text = "...";
+                openDialogBtn.Width  = 5;
+                openDialogBtn.Height = 1;
+                openDialogBtn.X = Pos.AnchorEnd();
+                openDialogBtn.Y = Pos.Bottom(label);
+                container.Add(openDialogBtn);
+
+                openDialogBtn.Activated += (_, _) =>
+                {
+                    var openDialogPath = property.GetValue(model) as string ?? "";
+                    var split = openDialogPath.Split(';',  StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                    var openDialog = new OpenDialog();
+                    
+                    openDialog.OpenMode = openDialogAttribute.Mode;
+                    
+                    openDialog.Path = split.FirstOrDefault() ?? "";
+
+                    openDialog.AllowsMultipleSelection = openDialogAttribute.Options.HasFlag(OpenDialogAttributeOptions.AllowMultipleSelection);
+                    
+                    if (string.IsNullOrEmpty(openDialogAttribute.Filters))
+                    {
+                        openDialog.AllowedTypes = [new AllowedTypeAny()];
+                    }
+                    else
+                    {
+                        var filterString = openDialogAttribute.Filters.Split('|');
+                        openDialog.AllowedTypes = filterString
+                            .Select((t, i) => (t, i))
+                            .Where(x => x.i % 2 == 0)
+                            .Select(x => new AllowedType(
+                                filterString.ElementAtOrDefault(x.i),
+                                filterString.ElementAtOrDefault(x.i + 1)))
+                            .OfType<IAllowedType>()
+                            .ToList();
+                    }
+                    
+                    openDialogBtn.SuperView!.App!.Run(openDialog);
+                };
+            }
+            
             container.Add(textField);
 
             var validationLabel = AddValidationLabel(container, textField);

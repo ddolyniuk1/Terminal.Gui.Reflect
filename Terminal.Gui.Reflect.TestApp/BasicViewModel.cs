@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Terminal.Gui.Reflect.Attributes;
+using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.TestApp
 {
@@ -19,7 +20,48 @@ namespace Terminal.Gui.Reflect.TestApp
             get;
             set => SetField(ref field, value);
         }
-
+        
+        [Category("Bools")]
+        public bool SomeBool1
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool2
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool3
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool4
+        {
+            get;
+            set => SetField(ref field, value);
+        }  
+        
+        [Category("Bools")]
+        public bool SomeBool5
+        {
+            get;
+            set => SetField(ref field, value);
+        }  
+        
+        [Category("Bools")]
+        public bool SomeBool6
+        {
+            get;
+            set => SetField(ref field, value);
+        }
         [Category("Text")]
         [DisplayName("Some Text")]
         [Display(Prompt = "This is some text")]
@@ -27,6 +69,17 @@ namespace Terminal.Gui.Reflect.TestApp
         [MaxLength(50)]
         [Description("This is some text")]
         public string? SomeText
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Text")]
+        [DisplayName("Some File")]
+        [Display(Prompt = "This is some file")]
+        [Description("This is some file")]
+        [OpenDialog(OpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
+        public string? SomePath
         {
             get;
             set => SetField(ref field, value);

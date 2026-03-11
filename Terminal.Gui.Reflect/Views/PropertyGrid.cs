@@ -5,7 +5,6 @@ using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Settings;
-using Terminal.Gui.Reflect.Views.TerminalGuiComponents;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
 
@@ -41,10 +40,11 @@ public class PropertyGrid : FrameView
            .OrderBy(c => (categoryLayoutDefinitions.GetValueOrDefault(c) ?? new CategoryLayoutAttribute(c)).Order)
            .ToList();
 
-        var uniformGrid = new UniformGrid(getLayoutAttribute.MaxRows, getLayoutAttribute.MaxColumns);
-        uniformGrid.Width  = Dim.Fill();
-        uniformGrid.Height = Dim.Fill();
-        
+        var uniformGrid = new UniformGridA(getLayoutAttribute.MaxColumns);
+        // uniformGrid.Height = 600;
+        uniformGrid.Height = Dim.Absolute(200);
+        uniformGrid.ForcedHeight = 200;
+        uniformGrid.VerticalScrollBar.VisibilityMode = ScrollBarVisibilityMode.Always;
         var hasCategories = categoryPropertiesOrdered.Any(t => t != DefaultCategory);
         
         foreach (var category in categoryPropertiesOrdered)
@@ -87,30 +87,26 @@ public class PropertyGrid : FrameView
         categoryView.Margin!.Thickness = _settings.CategoryMargin;
         categoryView.Padding!.Thickness = _settings.CategoryPadding;
         
-        UniformGrid uniformGrid;
+        UniformGridA flexGrid;
 
         var layoutDefinition = metadata.OfType<CategoryLayoutAttribute>().FirstOrDefault();
 
         if (layoutDefinition != null)
         {
-            uniformGrid        = new UniformGrid(layoutDefinition.MaxRows, layoutDefinition.MaxColumns);
-            uniformGrid.Width  = Dim.Fill();
-            uniformGrid.Height = Dim.Fill();
+            flexGrid = new UniformGridA(layoutDefinition.MaxColumns);
 
-            categoryView.Add(uniformGrid);
+            categoryView.Add(flexGrid);
         }
         else
         {
-            uniformGrid = new UniformGrid();
-            uniformGrid.Width  = Dim.Fill();
-            uniformGrid.Height = Dim.Fill();
+            flexGrid = new UniformGridA(1);
             
-            categoryView.Add(uniformGrid);
+            categoryView.Add(flexGrid);
         }
 
         parent.Add(categoryView);
 
-        return uniformGrid;
+        return flexGrid;
     }
 
     protected virtual IEnumerable<string> GetCategories()
