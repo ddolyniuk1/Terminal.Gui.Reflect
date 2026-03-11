@@ -173,7 +173,7 @@ public class DefaultTextEditor : PropertyEditorBase
 
                 var openDialog = new OpenDialog();
 
-                openDialog.OpenMode = openDialogAttribute.Mode;
+                openDialog.OpenMode = (OpenMode)openDialogAttribute.Mode;
 
                 openDialog.Path = split.FirstOrDefault() ?? "";
 

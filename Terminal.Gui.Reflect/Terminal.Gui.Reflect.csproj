@@ -26,5 +26,11 @@
       <Link>README.md</Link>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Terminal.Gui.Reflect.Abstractions\Terminal.Gui.Reflect.Abstractions.csproj" />
+  </ItemGroup>
 
 </Project>

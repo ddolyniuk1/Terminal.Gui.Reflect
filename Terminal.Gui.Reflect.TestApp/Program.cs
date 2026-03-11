@@ -21,12 +21,9 @@ public class ExampleWindow : Window
         var model = new BasicViewModel();
         var settings = new PropertyGridSettings()
         {
-            ShowBorder = true,
+            ShowBorder = false,
         };
-        var button = new Button()
-        {
-            Text = "Copy Layout Data"
-        }; 
+      
         var reflected = new PropertyGrid(model, settings);
         reflected.Width  = Dim.Fill();
         reflected.Height = Dim.Auto();

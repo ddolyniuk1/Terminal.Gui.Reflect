@@ -85,7 +85,7 @@ namespace Terminal.Gui.Reflect.TestApp
         [DisplayName("Some File")]
         [Display(Prompt = "This is some file")]
         [Description("This is some file")]
-        [OpenDialog(OpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
+        [OpenDialog(PathOpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
         public string? SomePath
         {
             get;
@@ -96,7 +96,7 @@ namespace Terminal.Gui.Reflect.TestApp
         [DisplayName("Some File 2")]
         [Display(Prompt = "This is some file 2")]
         [Description("This is some file 2")]
-        [OpenDialog(OpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
+        [OpenDialog(PathOpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
         public string? SomePath2
         {
             get;
