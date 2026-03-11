@@ -3,10 +3,16 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using Terminal.Gui.Reflect.Attributes;
+using Terminal.Gui.Reflect.Attributes; 
 
 namespace Terminal.Gui.Reflect.TestApp
 {
+    public enum Choices
+    {
+        SomeChoice1,
+        SomeChoice2,
+        SomeOtherChoice3
+    }
     [DisplayName("Some View")]
     [CategoryLayout("Bools", 1, 3, -1)]
     [CategoryLayout("Text", 1, 1, -1)]
@@ -19,7 +25,50 @@ namespace Terminal.Gui.Reflect.TestApp
             get;
             set => SetField(ref field, value);
         }
-
+        
+        public Choices Choice { get; set; }
+        
+        [Category("Bools")]
+        public bool SomeBool1
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool2
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool3
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Bools")]
+        public bool SomeBool4
+        {
+            get;
+            set => SetField(ref field, value);
+        }  
+        
+        [Category("Bools")]
+        public bool SomeBool5
+        {
+            get;
+            set => SetField(ref field, value);
+        }  
+        
+        [Category("Bools")]
+        public bool SomeBool6
+        {
+            get;
+            set => SetField(ref field, value);
+        }
         [Category("Text")]
         [DisplayName("Some Text")]
         [Display(Prompt = "This is some text")]
@@ -27,6 +76,28 @@ namespace Terminal.Gui.Reflect.TestApp
         [MaxLength(50)]
         [Description("This is some text")]
         public string? SomeText
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Text")]
+        [DisplayName("Some File")]
+        [Display(Prompt = "This is some file")]
+        [Description("This is some file")]
+        [OpenDialog(OpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
+        public string? SomePath
+        {
+            get;
+            set => SetField(ref field, value);
+        }
+        
+        [Category("Text")]
+        [DisplayName("Some File 2")]
+        [Display(Prompt = "This is some file 2")]
+        [Description("This is some file 2")]
+        [OpenDialog(OpenMode.File, OpenDialogAttributeOptions.None, "Image Files (*.png; *.jpg; *.bmp)|*.png; *.jpg; *.bmp|All Files (*.*)|*.*")]
+        public string? SomePath2
         {
             get;
             set => SetField(ref field, value);

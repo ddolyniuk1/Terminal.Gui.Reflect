@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Settings;
-using Terminal.Gui.Reflect.Views.TerminalGuiComponents;
-using Terminal.Gui.ViewBase;
-using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Views;
 
@@ -42,8 +38,8 @@ public class PropertyGrid : FrameView
            .ToList();
 
         var uniformGrid = new UniformGrid(getLayoutAttribute.MaxRows, getLayoutAttribute.MaxColumns);
-        uniformGrid.Width  = Dim.Fill();
-        uniformGrid.Height = Dim.Fill();
+        uniformGrid.Width = Dim.Fill();
+        uniformGrid.Height = Dim.Auto(DimAutoStyle.Content, Dim.Absolute(15));
         
         var hasCategories = categoryPropertiesOrdered.Any(t => t != DefaultCategory);
         
@@ -81,36 +77,35 @@ public class PropertyGrid : FrameView
         }
         
         categoryView.CanFocus = true;
-        categoryView.Width  = Dim.Fill();
-        categoryView.Height = Dim.Fill();
+        categoryView.Height = Dim.Auto(DimAutoStyle.Content, Dim.Absolute(15));
+        categoryView.Width = Dim.Fill();
 
         categoryView.Margin!.Thickness = _settings.CategoryMargin;
         categoryView.Padding!.Thickness = _settings.CategoryPadding;
         
-        UniformGrid uniformGrid;
+        UniformGrid flexGrid;
 
         var layoutDefinition = metadata.OfType<CategoryLayoutAttribute>().FirstOrDefault();
 
         if (layoutDefinition != null)
         {
-            uniformGrid        = new UniformGrid(layoutDefinition.MaxRows, layoutDefinition.MaxColumns);
-            uniformGrid.Width  = Dim.Fill();
-            uniformGrid.Height = Dim.Fill();
-
-            categoryView.Add(uniformGrid);
+            flexGrid = new UniformGrid(layoutDefinition.MaxRows, layoutDefinition.MaxColumns);
+           
+            categoryView.Add(flexGrid);
         }
         else
         {
-            uniformGrid = new UniformGrid();
-            uniformGrid.Width  = Dim.Fill();
-            uniformGrid.Height = Dim.Fill();
+            flexGrid = new UniformGrid(-1, 1);
             
-            categoryView.Add(uniformGrid);
+            categoryView.Add(flexGrid);
         }
-
+        
+        flexGrid.Width = Dim.Fill();
+        flexGrid.Height = Dim.Auto();
+        
         parent.Add(categoryView);
 
-        return uniformGrid;
+        return flexGrid;
     }
 
     protected virtual IEnumerable<string> GetCategories()
@@ -167,5 +162,7 @@ public class PropertyGrid : FrameView
             var editorView = propertyEditor.Render(this, _boundModel, property, _settings);
             categoryView.Add(editorView);
         }
+        
+        Console.WriteLine("");
     }
 }

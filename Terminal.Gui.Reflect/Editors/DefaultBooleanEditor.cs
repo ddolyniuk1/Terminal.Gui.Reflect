@@ -1,10 +1,7 @@
 ﻿using System.Reflection;
-using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Bindings;
 using Terminal.Gui.Reflect.Settings;
-using Terminal.Gui.ViewBase;
-using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Editors
 {
@@ -30,8 +27,9 @@ namespace Terminal.Gui.Reflect.Editors
             var container = new View
             {
                 CanFocus = true,
-                Width    = Dim.Fill(),
-                Height   = Dim.Auto(),
+                Width    = 10,
+                Height   = 3,
+                ShadowStyle = ShadowStyle.None,
             };
             container.Padding!.Thickness = new Thickness(1);
 
@@ -43,6 +41,7 @@ namespace Terminal.Gui.Reflect.Editors
                 X         = 0,
                 Y         = 0,
                 
+                ShadowStyle = ShadowStyle.None,
                 // Allow indeterminate state for nullable bools
                 AllowCheckStateNone = isNullable,
                 TabStop   = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
@@ -65,22 +64,21 @@ namespace Terminal.Gui.Reflect.Editors
             container.Add(checkbox);
 
             var validationLabel = AddValidationLabel(container, checkbox);
-
-            // ── Binding ────────────────────────────────────────────────────────
+ 
             // Use bool? internally so we handle both bool and bool? properties uniformly.
             var binding = new PropertyBinding<bool?>(
                 model,
                 property,
-                uiSetter: value => checkbox.Value = value switch
+                uiSetter: value => checkbox.CheckedState = value switch
                 {
                     true  => CheckState.Checked,
                     false => CheckState.UnChecked,
                     null  => CheckState.None,
                 });
 
-            checkbox.ValueChanged += (_, _) =>
+            checkbox.CheckedStateChanged += (_, _) =>
             {
-                binding.PushToModel(() => checkbox.Value switch
+                binding.PushToModel(() => checkbox.CheckedState switch
                 {
                     CheckState.Checked   => true,
                     CheckState.UnChecked => false,

@@ -20,6 +20,7 @@ namespace Terminal.Gui.Reflect.Base
 
         public PropertyEditorRegistry()
         {
+            Register(new DefaultEnumEditor(), priority: 100);
             Register(new BoolCheckboxEditor(), priority: 100);
             Register(new DefaultTextEditor(),  priority: 0);  
         }

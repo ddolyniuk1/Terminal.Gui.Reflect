@@ -21,7 +21,7 @@ namespace Terminal.Gui.Reflect.Attributes
         : BaseLayoutAttribute(maxColumns, maxRows);
     
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class CategoryLayoutAttribute(string category, int order = -1, int maxColumns = 5, int maxRows = -1)
+    public class CategoryLayoutAttribute(string category, int order = -1, int maxColumns = 1, int maxRows = -1)
         : BaseLayoutAttribute(maxColumns, maxRows)
     {
         public string Category { get; } = category;

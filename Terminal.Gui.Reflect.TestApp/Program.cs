@@ -1,38 +1,39 @@
-﻿using Terminal.Gui;
-using Terminal.Gui.App;
-using Terminal.Gui.Configuration;
-using Terminal.Gui.Input;
+﻿using System.Drawing;
+using Terminal.Gui; 
 using Terminal.Gui.Reflect.Settings;
 using Terminal.Gui.Reflect.TestApp;
-using Terminal.Gui.Reflect.Views;
-using Terminal.Gui.ViewBase;
-using Terminal.Gui.Views;
-
-ConfigurationManager.RuntimeConfig = """{ "Theme": "Amber Phosphor" }""";
-ConfigurationManager.Enable (ConfigLocations.All);
-IApplication app = Application.Create().Init ();
+using Terminal.Gui.Reflect.Views; 
+ 
 ConfigurationManager.Apply();
+ThemeManager.Instance.Theme = "Dark";
 
-app.Run<ExampleWindow>();
+Application.Run<ExampleWindow>();
 
-app.Dispose();
+Application.Shutdown();
 
 public class ExampleWindow : Window
 {
 
     public ExampleWindow()
-    {
+    { 
+        VerticalScrollBar.AutoShow = true;
         Title = "Example App (Ctrl+Q to quit)";
         var model = new BasicViewModel();
         var settings = new PropertyGridSettings()
         {
-            ShowBorder = false,
+            ShowBorder = true,
         };
+        var button = new Button()
+        {
+            Text = "Copy Layout Data"
+        }; 
         var reflected = new PropertyGrid(model, settings);
         reflected.Width  = Dim.Fill();
-        reflected.Height = Dim.Fill();
+        reflected.Height = Dim.Auto();
+        
+        VerticalScrollBar.ScrollableContentSize = 55;
+        
         Add(reflected);
-       
         model.PropertyChanged += (sender, args) =>
         {
             Title = model.SomeText + " " + model.SomeBool;
