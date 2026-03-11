@@ -30,8 +30,8 @@ namespace Terminal.Gui.Reflect.Editors
             var container = new View
             {
                 CanFocus = true,
-                Width    = Dim.Fill(),
-                Height   = Dim.Auto(),
+                Width    = 10,
+                Height   = 3,
                 ShadowStyle = ShadowStyle.None,
             };
             container.Padding!.Thickness = new Thickness(1);

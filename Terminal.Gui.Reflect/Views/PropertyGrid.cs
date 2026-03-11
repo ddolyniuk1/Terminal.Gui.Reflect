@@ -40,11 +40,9 @@ public class PropertyGrid : FrameView
            .OrderBy(c => (categoryLayoutDefinitions.GetValueOrDefault(c) ?? new CategoryLayoutAttribute(c)).Order)
            .ToList();
 
-        var uniformGrid = new UniformGridA(getLayoutAttribute.MaxColumns);
-        // uniformGrid.Height = 600;
-        uniformGrid.Height = Dim.Absolute(200);
-        uniformGrid.ForcedHeight = 200;
-        uniformGrid.VerticalScrollBar.VisibilityMode = ScrollBarVisibilityMode.Always;
+        var uniformGrid = new UniformGrid(getLayoutAttribute.MaxRows, getLayoutAttribute.MaxColumns);
+        uniformGrid.Width = Dim.Fill();
+        uniformGrid.Height = Dim.Fill();
         var hasCategories = categoryPropertiesOrdered.Any(t => t != DefaultCategory);
         
         foreach (var category in categoryPropertiesOrdered)
@@ -81,29 +79,32 @@ public class PropertyGrid : FrameView
         }
         
         categoryView.CanFocus = true;
-        categoryView.Width  = Dim.Fill();
-        categoryView.Height = Dim.Fill();
+        categoryView.Height = Dim.Auto(DimAutoStyle.Content, Dim.Absolute(15));
+        categoryView.Width = Dim.Fill();
 
         categoryView.Margin!.Thickness = _settings.CategoryMargin;
         categoryView.Padding!.Thickness = _settings.CategoryPadding;
         
-        UniformGridA flexGrid;
+        UniformGrid flexGrid;
 
         var layoutDefinition = metadata.OfType<CategoryLayoutAttribute>().FirstOrDefault();
 
         if (layoutDefinition != null)
         {
-            flexGrid = new UniformGridA(layoutDefinition.MaxColumns);
-
+            flexGrid = new UniformGrid(layoutDefinition.MaxRows, layoutDefinition.MaxColumns);
+           
             categoryView.Add(flexGrid);
         }
         else
         {
-            flexGrid = new UniformGridA(1);
+            flexGrid = new UniformGrid(-1, 1);
             
             categoryView.Add(flexGrid);
         }
-
+        
+        flexGrid.Width = Dim.Fill();
+        flexGrid.Height = Dim.Auto();
+        
         parent.Add(categoryView);
 
         return flexGrid;
@@ -163,5 +164,7 @@ public class PropertyGrid : FrameView
             var editorView = propertyEditor.Render(this, _boundModel, property, _settings);
             categoryView.Add(editorView);
         }
+        
+        Console.WriteLine("");
     }
 }
