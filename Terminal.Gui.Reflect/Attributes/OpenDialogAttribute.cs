@@ -1,5 +1,3 @@
-using Terminal.Gui.Views;
-
 namespace Terminal.Gui.Reflect.Attributes;
 
 [Flags]
@@ -10,7 +8,7 @@ public enum OpenDialogAttributeOptions
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public class OpenDialogAttribute : Attribute
+public class OpenDialogAttribute : System.Attribute
 {
     public OpenMode Mode { get; }
     public OpenDialogAttributeOptions Options { get; }

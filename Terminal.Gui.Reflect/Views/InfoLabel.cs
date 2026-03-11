@@ -1,8 +1,5 @@
 using System.ComponentModel;
 using System.Drawing;
-using Terminal.Gui.Drawing;
-using Terminal.Gui.Input;
-using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Views;
 
@@ -86,7 +83,7 @@ public sealed class InfoLabel : Label
 
     protected override bool OnDrawingText()
     {
-        SetAttributeForRole(HasFocus ? VisualRole.Focus : VisualRole.Normal);
+        Driver.SetAttribute(HasFocus ? GetFocusColor() : GetNormalColor());
         Move(0, 0);
         AddStr(Icon);
         return true;
@@ -103,7 +100,7 @@ public sealed class InfoLabel : Label
         return base.OnMouseEnter(eventArgs);
     }
  
-    protected override bool OnMouseEvent(Mouse mouse)
+    protected override bool OnMouseEvent(MouseEventArgs mouse)
     {
         TogglePin();
         mouse.Handled = true;
@@ -144,8 +141,8 @@ public sealed class InfoLabel : Label
 
         // Position: prefer right of this view, fall back to left if off-screen
         var screenRect = FrameToScreen();
-        var screenW = App?.Screen.Width ?? 80;
-        var screenH = App?.Screen.Height ?? 24;
+        var screenW = Driver?.Cols ?? 80;
+        var screenH = Driver?.Rows ?? 24;
 
         var popX = screenRect.X + screenRect.Width;
         var popY = screenRect.Y;
@@ -188,20 +185,20 @@ public sealed class InfoLabel : Label
             _popup.Title = " ℹ ";
         }
 
-        App?.TopRunnableView?.Add(_popup);
-        App?.TopRunnableView?.SetNeedsDraw();
+        Application.Top?.Add(_popup);
+        Application.Top?.SetNeedsDraw();
     }
 
     private void HidePopup()
     {
         DestroyPopup();
-        App?.TopRunnableView?.SetNeedsDraw();
+        Application.Top?.SetNeedsDraw();
     }
 
     private void DestroyPopup()
     {
         if (_popup is null) return;
-        App?.TopRunnableView?.Remove(_popup);
+        Application.Top?.Remove(_popup);
         _popup.Dispose();
         _popup = null;
     }

@@ -19,7 +19,7 @@
     <Version>0.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-	  <PackageReference Include="Terminal.Gui" Version="2.0.0-develop.5180" />
+	  <PackageReference Include="Terminal.Gui" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" >

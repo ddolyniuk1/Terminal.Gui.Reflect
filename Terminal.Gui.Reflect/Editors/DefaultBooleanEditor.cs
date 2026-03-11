@@ -1,10 +1,7 @@
 ﻿using System.Reflection;
-using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Bindings;
 using Terminal.Gui.Reflect.Settings;
-using Terminal.Gui.ViewBase;
-using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Editors
 {
@@ -72,16 +69,16 @@ namespace Terminal.Gui.Reflect.Editors
             var binding = new PropertyBinding<bool?>(
                 model,
                 property,
-                uiSetter: value => checkbox.Value = value switch
+                uiSetter: value => checkbox.CheckedState = value switch
                 {
                     true  => CheckState.Checked,
                     false => CheckState.UnChecked,
                     null  => CheckState.None,
                 });
 
-            checkbox.ValueChanged += (_, _) =>
+            checkbox.CheckedStateChanged += (_, _) =>
             {
-                binding.PushToModel(() => checkbox.Value switch
+                binding.PushToModel(() => checkbox.CheckedState switch
                 {
                     CheckState.Checked   => true,
                     CheckState.UnChecked => false,

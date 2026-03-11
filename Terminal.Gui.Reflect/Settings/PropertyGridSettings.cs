@@ -1,5 +1,3 @@
-using Terminal.Gui.Drawing;
-
 namespace Terminal.Gui.Reflect.Settings;
 
 public class PropertyGridSettings

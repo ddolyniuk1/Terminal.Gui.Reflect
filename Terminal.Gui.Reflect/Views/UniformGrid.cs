@@ -1,6 +1,5 @@
 using System.Drawing;
-using System.Reflection;
-using Terminal.Gui.ViewBase;
+using System.Reflection; 
 
 namespace Terminal.Gui.Reflect.Views;
 
@@ -59,7 +58,7 @@ public class UniformGrid : View
 
     private (int rows, int cols, int count) ComputeGrid()
     {
-        var visibleChildren = SubViews.Count(s => s.Visible);
+        var visibleChildren = Subviews.Count(s => s.Visible);
         if (visibleChildren == 0) return (0, 0, 0);
 
         int cols, rows;
@@ -83,14 +82,16 @@ public class UniformGrid : View
         return (rows, cols, visibleChildren);
     }
 
-    protected override void OnSubViewsLaidOut(LayoutEventArgs args)
+    protected override void OnSubviewsLaidOut(LayoutEventArgs args)
     {
-        base.OnSubViewsLaidOut(args);
+        base.OnSubviewsLaidOut(args);
         ArrangeChildren();
     }
+    
+    
     private bool _autoHeight = true;
 
-    public new Dim Height
+    public new Dim? Height
     {
         get => base.Height;
         set
@@ -99,12 +100,13 @@ public class UniformGrid : View
             base.Height = value;
         }
     }
+    
     private void ArrangeChildren()
     {
         var totalWidth = Viewport.Width;
 
         _cachedChildren.Clear();
-        foreach (var sub in SubViews)
+        foreach (var sub in Subviews)
             if (sub.Visible)
                 _cachedChildren.Add(sub);
 

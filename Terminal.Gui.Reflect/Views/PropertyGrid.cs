@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Terminal.Gui.Drawing;
 using Terminal.Gui.Reflect.Attributes;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Settings;
-using Terminal.Gui.ViewBase;
-using Terminal.Gui.Views;
 
 namespace Terminal.Gui.Reflect.Views;
 
@@ -42,7 +39,8 @@ public class PropertyGrid : FrameView
 
         var uniformGrid = new UniformGrid(getLayoutAttribute.MaxRows, getLayoutAttribute.MaxColumns);
         uniformGrid.Width = Dim.Fill();
-        uniformGrid.Height = Dim.Fill();
+        uniformGrid.Height = Dim.Auto(DimAutoStyle.Content, Dim.Absolute(15));
+        
         var hasCategories = categoryPropertiesOrdered.Any(t => t != DefaultCategory);
         
         foreach (var category in categoryPropertiesOrdered)
