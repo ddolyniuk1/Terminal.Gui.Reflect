@@ -36,5 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Terminal.Gui.Reflect.Abstractions\Terminal.Gui.Reflect.Abstractions.csproj" />
   </ItemGroup>
-
+	<PropertyGroup>
+		<LangVersion>preview</LangVersion>
+	</PropertyGroup>
 </Project>

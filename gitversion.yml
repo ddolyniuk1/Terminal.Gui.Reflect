@@ -2,7 +2,9 @@ mode: Mainline
 branches:
   main:
     regex: ^main$
-    tag: ''
+    tag: ""
+    increment: Patch
   feature:
     regex: ^feature/
-    tag: '{BranchName}'
+    tag: "{BranchName}"
+    increment: Inherit

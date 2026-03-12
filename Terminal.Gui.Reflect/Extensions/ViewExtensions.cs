@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Terminal.Gui.Reflect.Base;
+﻿using Terminal.Gui.Reflect.Interfaces;
 
 namespace Terminal.Gui.Reflect.Extensions;
 

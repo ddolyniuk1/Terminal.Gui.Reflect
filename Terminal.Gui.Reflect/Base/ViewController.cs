@@ -76,9 +76,7 @@ public abstract class ViewController<TView, TViewModel> : ViewController<TView>,
     /// <param name="modelExpr"></param>
     /// <param name="view"></param>
     /// <param name="viewExpr"></param>
-    /// <param name="converterIn"></param>
-    /// <param name="converterOut"></param>
-    /// <param name="changedCallback"></param>
+    /// <param name="configure"></param>
     public void Bind<TProp, TTargetView, TTargetViewProp>(Expression<Func<TViewModel, TProp?>> modelExpr,
         TTargetView                                                                            view,
         Expression<Func<TTargetView, TTargetViewProp?>>                                        viewExpr,
