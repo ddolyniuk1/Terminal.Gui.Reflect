@@ -14,5 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Terminal.Gui.Reflect\Terminal.Gui.Reflect.csproj" />
   </ItemGroup>
-
+  
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 </Project>

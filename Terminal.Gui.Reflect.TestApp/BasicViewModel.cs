@@ -14,7 +14,7 @@ namespace Terminal.Gui.Reflect.TestApp
         SomeOtherChoice3
     }
     [DisplayName("Some View")]
-    [CategoryLayout("Bools", 1, 3, -1)]
+    [CategoryLayout("Bools", 1, 2, -1)]
     [CategoryLayout("Text", 1, 1, -1)]
     [Layout(2, 3)]
     public class BasicViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
@@ -36,6 +36,8 @@ namespace Terminal.Gui.Reflect.TestApp
         }
         
         [Category("Bools")]
+        [Description("This is a description for SomeBools2")]
+        [ReadOnly(true)]
         public bool SomeBool2
         {
             get;

@@ -2,6 +2,7 @@
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Bindings;
 using Terminal.Gui.Reflect.Settings;
+using Terminal.Gui.Reflect.Views;
 
 namespace Terminal.Gui.Reflect.Editors
 {
@@ -36,7 +37,7 @@ namespace Terminal.Gui.Reflect.Editors
             var checkbox = new CheckBox
             {
                 Text      = GetLabel(property) + required,
-                Width     = Dim.Fill(),
+                Width     = Dim.Fill(4),
                 Height    = 1,
                 X         = 0,
                 Y         = 0,
@@ -45,8 +46,20 @@ namespace Terminal.Gui.Reflect.Editors
                 // Allow indeterminate state for nullable bools
                 AllowCheckStateNone = isNullable,
                 TabStop   = isReadOnly ? TabBehavior.NoStop : TabBehavior.TabStop,
+                Enabled =  !isReadOnly
             };
 
+            var tooltipText = GetDescription(property);
+            if (!string.IsNullOrWhiteSpace(tooltipText))
+            {
+                var info = new InfoLabel(tooltipText);
+                info.X = Pos.Right(checkbox) + 3;
+                info.Y = 0;
+                info.Width = Dim.Auto(DimAutoStyle.Text);
+                info.Height = 1;
+                container.Add(info);
+            }
+            
             checkbox.X = propertyGridSettings.HorizontalContentAlignment switch
             {
                 EHorizontalContentAlignment.Left => 0,
