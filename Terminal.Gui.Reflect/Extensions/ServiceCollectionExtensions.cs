@@ -13,6 +13,7 @@ namespace Terminal.Gui.Reflect.Extensions
         {
             return serviceCollection
                   .AddSingleton<IViewControllerFactory, ViewControllerControllerFactory>()
+                  .AddSingleton<IObservableTaskRunnerService, ObservableTaskRunnerService>()
                   .AddSingleton<IThemeService, ThemeService>()
                   .AddSingleton<IIconService, IconService>();
         }
