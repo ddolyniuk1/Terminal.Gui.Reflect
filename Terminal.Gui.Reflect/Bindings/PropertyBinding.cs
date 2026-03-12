@@ -1,5 +1,139 @@
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Reflection;
+using Terminal.Gui;
+
+/// <summary>
+/// Expression-based two-way property binding for Terminal.Gui v2 views.
+/// </summary>
+/// <typeparam name="TModel">The model type.</typeparam>
+/// <typeparam name="TProp">The property type on the model.</typeparam>
+/// <typeparam name="TView">The Terminal.Gui view type.</typeparam>
+/// <typeparam name="TViewProp">The view property type (often string).</typeparam>
+public sealed class PropertyBinding<TModel, TProp, TView, TViewProp> : IDisposable
+    where TModel  : INotifyPropertyChanged
+    where TView   : View
+{
+    private readonly TModel                    _model;
+    private readonly TView                     _view;
+    private readonly PropertyInfo              _modelProp;
+    private readonly PropertyInfo              _viewProp;
+    private readonly Func<TModel, TProp?>      _modelGetter;
+    private readonly Action<TModel, TProp?>    _modelSetter;
+    private readonly Func<TView,   TViewProp?> _viewGetter;
+    private readonly Action<TView, TViewProp?> _viewSetter;
+    private          bool                      _updating;
+
+    /// <summary>Raised after the model value is successfully updated from the UI.</summary>
+    public event Action<TProp?>? ValueChanged;
+
+    /// <param name="model">The data model (must implement INotifyPropertyChanged).</param>
+    /// <param name="modelExpr">Member expression selecting the model property, e.g. <c>m => m.Name</c>.</param>
+    /// <param name="view">The Terminal.Gui view to bind to.</param>
+    /// <param name="viewExpr">Member expression selecting the view property, e.g. <c>v => v.Text</c>.</param>
+    public PropertyBinding(
+        TModel                              model,
+        Expression<Func<TModel, TProp?>>    modelExpr,
+        TView                               view,
+        Expression<Func<TView, TViewProp?>> viewExpr)
+    {
+        _model = model;
+        _view  = view;
+
+        (_modelProp, _modelGetter, _modelSetter) = ResolveProperty<TModel, TProp>(modelExpr);
+        (_viewProp,  _viewGetter,  _viewSetter)  = ResolveProperty<TView,  TViewProp>(viewExpr);
+
+        // Seed UI from current model value
+        PushToView();
+
+        _model.PropertyChanged += OnModelPropertyChanged;
+
+        // Wire Terminal.Gui v2 unified text-changed event
+        _view.TextChanged += OnViewTextChanged;
+    }
+
+    private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != _modelProp.Name || _updating) return;
+
+        _updating = true;
+        try   { PushToView(); }
+        finally { _updating = false; }
+    }
+
+    private void PushToView()
+    {
+        var modelValue = _modelGetter(_model);
+        _viewSetter(_view, CoerceValue<TProp, TViewProp>(modelValue));
+    }
+
+    private void OnViewTextChanged(object? sender, EventArgs e)
+    {
+        if (_updating) return;
+
+        _updating = true;
+        try
+        {
+            var viewValue  = _viewGetter(_view);
+            var modelValue = CoerceValue<TViewProp, TProp>(viewValue);
+            _modelSetter(_model, modelValue);
+            ValueChanged?.Invoke(modelValue);
+        }
+        finally { _updating = false; }
+    }
+
+    /// <summary>
+    /// Extracts PropertyInfo + compiled getter/setter from a member expression.
+    /// </summary>
+    private static (PropertyInfo prop,
+        Func<TOwner,   TVal?> getter,
+        Action<TOwner, TVal?> setter)
+        ResolveProperty<TOwner, TVal>(Expression<Func<TOwner, TVal?>> expr)
+    {
+        if (expr.Body is not MemberExpression memberExpr ||
+            memberExpr.Member is not PropertyInfo pi)
+            throw new ArgumentException($"Expression must be a simple property access, got: {expr.Body}");
+
+        if (!pi.CanRead)  throw new ArgumentException($"Property {pi.Name} is not readable.");
+        if (!pi.CanWrite) throw new ArgumentException($"Property {pi.Name} is not writable.");
+
+        // Compile getter directly from the supplied lambda
+        var getter = expr.Compile();
+
+        // Build setter: (owner, value) => owner.Prop = value
+        var ownerParam = Expression.Parameter(typeof(TOwner), "owner");
+        var valueParam = Expression.Parameter(typeof(TVal),   "value");
+        var setterLambda = Expression.Lambda<Action<TOwner, TVal?>>(
+            Expression.Assign(
+                Expression.Property(ownerParam, pi),
+                valueParam),
+            ownerParam, valueParam);
+        var setter = setterLambda.Compile();
+
+        return (pi, getter, setter);
+    }
+
+    /// <summary>
+    /// Coerces a value from <typeparamref name="TFrom"/> to <typeparamref name="TTo"/>,
+    /// handling null, identity, and Convert.ChangeType for cross-type scenarios
+    /// (e.g. int model ↔ string view).
+    /// </summary>
+    private static TTo? CoerceValue<TFrom, TTo>(TFrom? value)
+    {
+        if (value is null)    return default;
+        if (value is TTo  to) return to;
+
+        var target = Nullable.GetUnderlyingType(typeof(TTo)) ?? typeof(TTo);
+        try { return (TTo?)Convert.ChangeType(value, target); }
+        catch { return default; }
+    }
+
+    public void Dispose()
+    {
+        _model.PropertyChanged -= OnModelPropertyChanged;
+        _view.TextChanged      -= OnViewTextChanged;
+    }
+}
 
 namespace Terminal.Gui.Reflect.Bindings
 {
@@ -51,7 +185,9 @@ namespace Terminal.Gui.Reflect.Bindings
             _uiSetter(GetModelValue());
 
             if (model is INotifyPropertyChanged inpc)
+            {
                 inpc.PropertyChanged += OnModelPropertyChanged;
+            }
         }
 
         /// <summary>
@@ -61,32 +197,56 @@ namespace Terminal.Gui.Reflect.Bindings
         public void PushToModel(Func<T?> uiGetter)
         {
             if (_updating) return;
+
             _updating = true;
             try
             {
                 var uiValue = uiGetter();
                 _property.SetValue(_model, CoerceToPropertyType(uiValue));
                 ValueChanged?.Invoke(uiValue);
-                return;
             }
-            finally { _updating = false; }
+            finally
+            {
+                _updating = false;
+            }
         }
 
         private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != _property.Name || _updating) return;
+
             _updating = true;
-            try   { _uiSetter(GetModelValue()); }
-            finally { _updating = false; }
+            try
+            {
+                _uiSetter(GetModelValue());
+            }
+            finally
+            {
+                _updating = false;
+            }
         }
 
         private T? GetModelValue()
         {
             var raw = _property.GetValue(_model);
-            if (raw is null)    return default;
-            if (raw is T typed) return typed;
-            try { return (T?)Convert.ChangeType(raw, typeof(T)); }
-            catch { return default; }
+            switch (raw)
+            {
+                case null:
+                    return default;
+                case T typed:
+                    return typed;
+                default:
+                    try
+                    {
+                        return (T?)Convert.ChangeType(raw, typeof(T));
+                    }
+                    catch
+                    {
+                        return default;
+                    }
+
+                    break;
+            }
         }
 
         /// <summary>
@@ -95,15 +255,17 @@ namespace Terminal.Gui.Reflect.Bindings
         private object? CoerceToPropertyType(T? value)
         {
             if (value is null) return null;
+
             var target = Nullable.GetUnderlyingType(_property.PropertyType) ?? _property.PropertyType;
-            if (value.GetType() == target) return value;
-            return Convert.ChangeType(value, target);
+            return value.GetType() == target ? value : Convert.ChangeType(value, target);
         }
 
         public void Dispose()
         {
             if (_model is INotifyPropertyChanged inpc)
+            {
                 inpc.PropertyChanged -= OnModelPropertyChanged;
+            }
         }
     }
 }
