@@ -12,11 +12,6 @@ public enum EObservableTaskStatus
     Failed
 }
 
-public interface IObservableTask : INotifyPropertyChanged
-{
-
-}
-
 public class ObservableTask : IObservableTask
 {
     private static readonly HashSet<string> StatusPropertyNames =
