@@ -15,5 +15,6 @@ public interface IViewController
     void InitializeComponents();
     void SetupBindings();
 
-    View GetRootBase();
+    View                 GetRootBase();
+    void Initialize();
 }

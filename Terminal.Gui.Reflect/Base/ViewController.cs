@@ -13,10 +13,9 @@ public abstract class ViewController<TView> : IViewController<TView> where TView
 
     protected ViewController()
     {
-        Initialize();
     }
 
-    private void Initialize()
+    public void Initialize()
     {
         InitializeComponents();
         SetupBindings();
@@ -57,14 +56,14 @@ public abstract class ViewController<TView> : IViewController<TView> where TView
     }
 }
 
-public abstract class ViewController<TView, TViewModel> : ViewController<TView>, IViewFor<TViewModel>, IDisposable
+public abstract class ViewController<TView, TViewModel> : ViewController<TView>, IViewFor<TViewModel>,
+    IViewModelMapper<TViewModel>, IPrivateSetViewModelMapper
     where TView : View, new() where TViewModel : INotifyPropertyChanged
 {
-    public TViewModel ViewModel { get; }
+    public TViewModel ViewModel { get; private set; }
 
-    protected ViewController(TViewModel viewModel)
+    protected ViewController()
     {
-        ViewModel = viewModel;
     }
 
     /// <summary>
@@ -85,5 +84,10 @@ public abstract class ViewController<TView, TViewModel> : ViewController<TView>,
     {
         Binding.TwoWay(ViewModel, modelExpr, view, viewExpr, configure)
                .DisposeWith(this);
+    }
+
+    void IPrivateSetViewModelMapper.SetViewModel(object viewModel)
+    {
+        ViewModel = (TViewModel)viewModel;
     }
 }

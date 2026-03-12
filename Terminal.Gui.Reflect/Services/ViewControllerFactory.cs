@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.Reflect.Interfaces;
 
-namespace Terminal.Gui.Reflect.Interfaces;
+namespace Terminal.Gui.Reflect.Services;
 
-public class ViewControllerControllerFactory(IServiceProvider provider) : IViewControllerFactory
+public class ViewControllerFactory(IServiceProvider provider) : IViewControllerFactory
 {
     public TViewController Create<TViewController>()
         where TViewController : IViewController
@@ -13,11 +15,18 @@ public class ViewControllerControllerFactory(IServiceProvider provider) : IViewC
         {
             var   viewModel = ActivatorUtilities.CreateInstance(provider, viewModelForViewType);
             view = ActivatorUtilities.CreateInstance<TViewController>(provider, viewModel);
+
+            if (view is IPrivateSetViewModelMapper privateSetViewModelMapper)
+            {
+                privateSetViewModelMapper.SetViewModel(viewModel);
+            }
         }
         else
         { 
             view = ActivatorUtilities.CreateInstance<TViewController>(provider);
         }
+
+        view.Initialize();
         return view;
     }
 
@@ -29,12 +38,23 @@ public class ViewControllerControllerFactory(IServiceProvider provider) : IViewC
         {
             var   viewModel = ActivatorUtilities.CreateInstance(provider, viewModelForViewType);
             view = ActivatorUtilities.CreateInstance(provider, viewType, viewModel);
+            if (view is IPrivateSetViewModelMapper privateSetViewModelMapper)
+            {
+                privateSetViewModelMapper.SetViewModel(viewModel);
+            }
         }
         else
         { 
             view = ActivatorUtilities.CreateInstance(provider, viewType);
         }
-        return view as IViewController;
+
+        if (view is not IViewController viewController)
+        {
+            return null;
+        }
+
+        viewController.Initialize();
+        return viewController;
     }
 
     private static Type? GetViewModelForViewType(Type viewType)

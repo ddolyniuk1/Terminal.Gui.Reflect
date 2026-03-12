@@ -12,7 +12,7 @@ namespace Terminal.Gui.Reflect.Extensions
         public static IServiceCollection AddReflectServices(this IServiceCollection serviceCollection)
         {
             return serviceCollection
-                  .AddSingleton<IViewControllerFactory, ViewControllerControllerFactory>()
+                  .AddSingleton<IViewControllerFactory, ViewControllerFactory>()
                   .AddSingleton<IObservableTaskRunnerService, ObservableTaskRunnerService>()
                   .AddSingleton<IThemeService, ThemeService>()
                   .AddSingleton<IIconService, IconService>();
