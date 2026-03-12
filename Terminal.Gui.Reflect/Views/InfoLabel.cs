@@ -83,7 +83,7 @@ public sealed class InfoLabel : Label
 
     protected override bool OnDrawingText()
     {
-        Driver.SetAttribute(HasFocus ? GetFocusColor() : GetNormalColor());
+        Driver!.SetAttribute(HasFocus ? GetFocusColor() : GetNormalColor());
         Move(0, 0);
         AddStr(Icon);
         return true;

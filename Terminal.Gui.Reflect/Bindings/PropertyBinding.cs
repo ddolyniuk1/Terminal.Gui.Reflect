@@ -314,8 +314,6 @@ public sealed class PropertyBinding<T> : IDisposable
                 {
                     return default;
                 }
-
-                break;
         }
     }
 

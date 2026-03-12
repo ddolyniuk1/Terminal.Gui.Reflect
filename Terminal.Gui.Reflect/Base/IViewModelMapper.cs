@@ -2,7 +2,7 @@
 
 public interface IViewModelMapper<TViewModel>
 {
-    TViewModel ViewModel { get; }
+    TViewModel? ViewModel { get; }
 }
 
 public interface IViewModelMapper

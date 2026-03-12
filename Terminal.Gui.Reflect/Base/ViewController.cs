@@ -60,11 +60,7 @@ public abstract class ViewController<TView, TViewModel> : ViewController<TView>,
     IViewModelMapper<TViewModel>, IPrivateSetViewModelMapper
     where TView : View, new() where TViewModel : INotifyPropertyChanged
 {
-    public TViewModel ViewModel { get; private set; }
-
-    protected ViewController()
-    {
-    }
+    public TViewModel ViewModel { get; private set; } = default!;
 
     /// <summary>
     /// Binds the property to the view and auto disposes

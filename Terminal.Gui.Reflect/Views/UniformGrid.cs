@@ -16,8 +16,6 @@ public class UniformGrid : View
     private int _columns;
     private int _rows;
     private MethodInfo? _layoutSubViewsCallback;
-    
-    public string Name { get; set; }
 
     /// <param name="rows">Number of rows. Use -1 for auto.</param>
     /// <param name="columns">Number of columns. Use -1 for auto.</param>
@@ -27,7 +25,6 @@ public class UniformGrid : View
         _columns = columns;
         CanFocus = true;
         TabStop = TabBehavior.TabGroup;
-        // ViewportSettings = ViewportSettingsFlags.AllowNegativeLocation | ViewportSettingsFlags.ClipContentOnly;
     }
 
     public int Rows

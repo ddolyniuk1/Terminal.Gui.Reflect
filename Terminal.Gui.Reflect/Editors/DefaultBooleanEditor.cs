@@ -60,14 +60,20 @@ public class BoolCheckboxEditor : PropertyEditorBase
             container.Add(info);
         }
             
+        // #todo look into if other values are needed
+    #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         checkbox.X = propertyGridSettings.HorizontalContentAlignment switch
+    #pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         {
             EHorizontalContentAlignment.Left   => 0,
             EHorizontalContentAlignment.Center => Pos.Center(),
             EHorizontalContentAlignment.Right  => Pos.AnchorEnd()
         };
-
+        
+        // #todo look into if other values are needed
+    #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         checkbox.Y = propertyGridSettings.VerticalContentAlignment switch
+    #pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         {
             EVerticalContentAlignment.Top    => 0,
             EVerticalContentAlignment.Center => Pos.Center(),

@@ -19,6 +19,5 @@ public interface IObservableTask : INotifyPropertyChanged
     string                             Label                   { get; }
     Task                               Task                    { get; }
     EObservableTaskStatus              Status                  { get; }
-    event PropertyChangedEventHandler? PropertyChanged;
     Result<bool>                       Cancel();
 }
