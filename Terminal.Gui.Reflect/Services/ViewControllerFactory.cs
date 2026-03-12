@@ -14,7 +14,7 @@ public class ViewControllerFactory(IServiceProvider provider) : IViewControllerF
         if (viewModelForViewType != null)
         {
             var   viewModel = ActivatorUtilities.CreateInstance(provider, viewModelForViewType);
-            view = ActivatorUtilities.CreateInstance<TViewController>(provider, viewModel);
+            view = ActivatorUtilities.CreateInstance<TViewController>(provider);
 
             if (view is IPrivateSetViewModelMapper privateSetViewModelMapper)
             {
@@ -37,7 +37,7 @@ public class ViewControllerFactory(IServiceProvider provider) : IViewControllerF
         if (viewModelForViewType != null)
         {
             var   viewModel = ActivatorUtilities.CreateInstance(provider, viewModelForViewType);
-            view = ActivatorUtilities.CreateInstance(provider, viewType, viewModel);
+            view = ActivatorUtilities.CreateInstance(provider, viewType);
             if (view is IPrivateSetViewModelMapper privateSetViewModelMapper)
             {
                 privateSetViewModelMapper.SetViewModel(viewModel);
