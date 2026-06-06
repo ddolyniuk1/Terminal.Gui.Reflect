@@ -1,8 +1,7 @@
 
 # Terminal.Gui.Reflect
 
-This project adds additional views for Terminal.Gui v2 applications. Per project name, the focus is on using reflection to auto-generate the view as well as automatic two-way binding support.
-
+This project is an opinionated view framework for scalable Terminal.GUI apps
 
 ## Acknowledgements
 
@@ -28,41 +27,107 @@ This project adds additional views for Terminal.Gui v2 applications. Per project
 
 ### PropertyGrid Example: 
 ```csharp
-// using Terminal.Gui v2
-var model = new BasicViewModel();
-var settings = new PropertyGridSettings()
+
+var hostBuilder = Host.CreateApplicationBuilder();
+hostBuilder.Services.AddReflectServices();
+hostBuilder.Services.AddOptions<AppSettings>();
+hostBuilder.Services.AddSingleton(Application.Create().Init());
+
+using var host = hostBuilder.Build();
+
+await host.StartAsync();
+
+var app = host.Services.GetRequiredService<IApplication>();
+var viewControllerFactory = host.Services.GetRequiredService<IViewControllerFactory>();
+var window = new Window
 {
-    ShowBorder = false
+    Title = "Sample App"
 };
-var propertyGrid = new PropertyGrid(model, settings);
-propertyGrid.Width  = Dim.Fill();
-propertyGrid.Height = Dim.Fill();
-Add(propertyGrid); // add the PropertyGrid to our View
+
+window.Add(viewControllerFactory.Create<DefaultView>()); // use our IViewControllerFactory to initialize and autowire views
+
+app.Run(window);
+
+host.WaitForShutdown();
 ```
 
-### UniformGrid Example
+### View / ViewModel Example
 ```csharp
-var uniformGrid = new UniformGrid(-1, 1); // vertical stacking control
+public class DefaultView : ViewController<FrameView, DefaultViewModel>
+{
+    private readonly Button _btn = new Button()
+    {
+        Text = "Click me!"
+    };
 
-uniformGrid = new UniformGrid(1, -1); // horizontal stacking control
+    public override void InitializeComponents()
+    {
+        Root.Width  = Dim.Fill();
+        Root.Height = Dim.Fill();
+        Root.Text = "Default View";
+        _btn.X      = Pos.Center();
+        _btn.Y      = Pos.Center();
+        _btn.MouseEvent += BtnOnMouseEvent; // hook to mouse events for this button
 
-uniformGrid = new UniformGrid(-1, 3); // N rows and up to 3 columns
+        Root.Add(_btn); // add our button to our root component
 
-Add(uniformGrid);
+        AddCleanupOperation(() => _btn.MouseEvent -= BtnOnMouseEvent); // unhook event when cleaning up
+    }
 
-uniformGrid.Add(new Label { Text = "Test" });
-uniformGrid.Add(new Label { Text = "Test2" });
-uniformGrid.Add(new Label { Text = "Test3" });
-```
+    private void BtnOnMouseEvent(object? sender, Mouse e)
+    {
+        if (e.IsPressed)    
+        {
+            ViewModel.Counter++; // when our button is clicked, increment the counter
+        }
+    }
 
-### InfoLabel Example
-```csharp
-var infoLabel = new InfoLabel("Some helpful information.");
+    public override void SetupBindings()
+    {
+        // custom binding utility function
+        Binding.TwoWay(ViewModel,                                          // view model
+                       model => model.Counter,                             // property expression
+                       _btn,                                               // ui element
+                       builder => builder
+                           .WithConvertIn(i => _btn.Text = $"Clicked {i}") // map the value
+                           .Build())
+                       .DisposeWith(this);                                 // cleanup
+        
+        // for basic bindings we use the Bind method instead
+        // Bind(m => m.Counter, _label, l => l.Text)
+    }
+}
 
-var label = new Label { Text = "Concise Label: ", X = 0, Y = 0, Width = Dim.Auto(DimAutoStyle.Text), Height = 1 }
+public class DefaultViewModel : INotifyPropertyChanged
+{
+    public int Counter
+    {
+        get;
+        set
+        {
+            if (value == field)
+            {
+                return;
+            }
 
-infoLabel.X = Pos.Right(label) + 3;
-infoLabel.Y = label.Y;
+            field = value;
+            OnPropertyChanged();
+        }
+    }
 
-Add(label, infoLabel);
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+}
 ```
