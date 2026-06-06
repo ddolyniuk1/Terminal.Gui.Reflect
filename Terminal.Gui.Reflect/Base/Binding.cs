@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq.Expressions;
 using Terminal.Gui.Reflect.Bindings;
+using Terminal.Gui.ViewBase;
 
 namespace Terminal.Gui.Reflect.Base;
 

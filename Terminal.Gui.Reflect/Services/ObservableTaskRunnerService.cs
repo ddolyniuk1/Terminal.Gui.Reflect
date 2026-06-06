@@ -1,10 +1,11 @@
 ﻿using System.Reactive.Linq;
+using Terminal.Gui.App;
 using Terminal.Gui.Reflect.Base;
 using Terminal.Gui.Reflect.Interfaces;
 
 namespace Terminal.Gui.Reflect.Services;
 
-public class ObservableTaskRunnerService(TimeSpan? defaultEvictionTimeAfterCompleted = null)
+public class ObservableTaskRunnerService(IApplication application, TimeSpan? defaultEvictionTimeAfterCompleted = null)
     : IObservableTaskRunnerService
 {
     private readonly TimeSpan? _defaultEvictionTimeAfterCompleted =
@@ -14,7 +15,7 @@ public class ObservableTaskRunnerService(TimeSpan? defaultEvictionTimeAfterCompl
 
     public IObservableTask RunTask(Func<Task> taskFactory, string label, string description)
     {
-        var task = new ObservableTask(taskFactory, label, description);
+        var task = new ObservableTask(application, taskFactory, label, description);
         BeginTrackingTask(task);
         return task;
     }

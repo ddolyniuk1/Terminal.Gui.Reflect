@@ -14,7 +14,6 @@ namespace Terminal.Gui.Reflect.Extensions
             return serviceCollection
                   .AddSingleton<IViewControllerFactory, ViewControllerFactory>()
                   .AddSingleton<IObservableTaskRunnerService, ObservableTaskRunnerService>()
-                  .AddSingleton<IThemeService, ThemeService>()
                   .AddSingleton<IIconService, IconService>();
         }
     }

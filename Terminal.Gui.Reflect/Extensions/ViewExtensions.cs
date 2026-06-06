@@ -1,4 +1,5 @@
 ﻿using Terminal.Gui.Reflect.Interfaces;
+using Terminal.Gui.ViewBase;
 
 namespace Terminal.Gui.Reflect.Extensions;
 

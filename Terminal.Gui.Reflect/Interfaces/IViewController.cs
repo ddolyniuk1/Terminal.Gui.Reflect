@@ -1,4 +1,4 @@
-﻿using Terminal.Gui.Reflect.Base;
+﻿using Terminal.Gui.ViewBase;
 
 namespace Terminal.Gui.Reflect.Interfaces;
 

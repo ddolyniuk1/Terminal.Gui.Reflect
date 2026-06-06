@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DotNext;
+using Terminal.Gui.App;
 
 namespace Terminal.Gui.Reflect.Base;
 
@@ -19,7 +20,7 @@ public class ObservableTask : IObservableTask
 
     private readonly CancellationTokenSource? _cts;
 
-    public ObservableTask(Func<Task> taskFactory, string label, string description)
+    public ObservableTask(IApplication application, Func<Task> taskFactory, string label, string description)
     {
         Label           = label;
         Description     = description;

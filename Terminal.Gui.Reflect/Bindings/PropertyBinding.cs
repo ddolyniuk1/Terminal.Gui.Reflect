@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using Terminal.Gui.Reflect.Base;
+using Terminal.Gui.ViewBase;
 
 namespace Terminal.Gui.Reflect.Bindings;
 

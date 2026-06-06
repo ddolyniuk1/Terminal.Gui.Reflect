@@ -24,9 +24,9 @@
     <None Remove="Attributes\**" />
   </ItemGroup>
   <ItemGroup>
-	  <PackageReference Include="DotNext" Version="6.0.0" />
+	  <PackageReference Include="DotNext" Version="6.3.0" />
 	  <PackageReference Include="System.Reactive" Version="6.1.0" />
-	  <PackageReference Include="Terminal.Gui" Version="2.0.0" />
+	  <PackageReference Include="Terminal.Gui" Version="2.4.4" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\">
@@ -35,6 +35,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Terminal.Gui.Reflect.Abstractions\Terminal.Gui.Reflect.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Editors\" />
+    <Folder Include="Settings\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 	<PropertyGroup>
 		<LangVersion>preview</LangVersion>
