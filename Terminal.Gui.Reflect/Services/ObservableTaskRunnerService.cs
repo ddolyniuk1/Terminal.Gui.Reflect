@@ -37,11 +37,11 @@ public class ObservableTaskRunnerService(IApplication application, TimeSpan? def
 
     private void BeginTrackingTask(ObservableTask task)
     {
-        Application.Invoke(() => { Tasks.Add(task); });
+        application.Invoke(() => { Tasks.Add(task); });
         task.Task.ContinueWith(t =>
         {
             Observable.Timer(_defaultEvictionTimeAfterCompleted ?? TimeSpan.FromSeconds(15))
-                      .Subscribe(_ => { Application.Invoke(() => { Tasks.Remove(task); }); });
+                      .Subscribe(_ => { application.Invoke(() => { Tasks.Remove(task); }); });
         });
     }
 }
